@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TEMPO.DataLayer\TEMPO.DataLayer.csproj" />
+  </ItemGroup>
+
 </Project>
