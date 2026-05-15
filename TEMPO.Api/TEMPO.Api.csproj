@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TEMPO.ServiceLayer\TEMPO.ServiceLayer.csproj" />
+    <ProjectReference Include="..\TEMPO.DataLayer\TEMPO.DataLayer.csproj" />
   </ItemGroup>
 
 </Project>
