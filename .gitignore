@@ -13,6 +13,9 @@ obj/
 # Visual Studio
 .vs/
 
+*.csproj.user
+*.csproj.lscache
+
 # Rider
 .idea/
 

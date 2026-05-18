@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TEMPO.DataLayer\TEMPO.DataLayer.csproj" />
+    <ProjectReference Include="..\TEMPO.Domain\TEMPO.Domain.csproj" />
   </ItemGroup>
 
 </Project>

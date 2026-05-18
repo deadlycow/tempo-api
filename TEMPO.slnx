@@ -6,5 +6,6 @@
   </Configurations>
   <Project Path="TEMPO.Api/TEMPO.Api.csproj" />
   <Project Path="TEMPO.DataLayer/TEMPO.DataLayer.csproj" />
+  <Project Path="TEMPO.Domain/TEMPO.Domain.csproj" />
   <Project Path="TEMPO.ServiceLayer/TEMPO.ServiceLayer.csproj" />
 </Solution>

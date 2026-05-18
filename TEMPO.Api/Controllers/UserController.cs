@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using TEMPO.Domain.Models;
+using TEMPO.ServiceLayer.Interfaces;
 
 namespace TEMPO.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
+public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet]
     public IActionResult Get()
@@ -12,9 +14,17 @@ public class UserController : ControllerBase
         return Ok(new { Message = "Hello from UserController!" });
     }
     [HttpPost]
-    public IActionResult Post([FromBody] object value)
+    public async Task<IActionResult> Post(UserModel user)
     {
-        return CreatedAtAction(nameof(Get), new { id = 1 }, new { Message = "Value created successfully!" });
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var result = await userService.Create(user);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+
+        return Ok(new { Message = "User created successfully!" });
     }
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
