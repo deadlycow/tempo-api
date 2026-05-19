@@ -6,8 +6,8 @@ public class UserModel
 {
   [Required]
   [StringLength(25, MinimumLength = 3)]
-  public string UserName { get; set; } = string.Empty;
+  public required string UserName { get; set; }
   [Required]
   [EmailAddress]
-  public string Email { get; set; } = string.Empty;
+  public required string Email { get; set; }
 }

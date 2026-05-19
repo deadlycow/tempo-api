@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-using TEMPO.ServiceLayer.Interfaces;
 using TEMPO.DataLayer.Entities;
-using TEMPO.Domain.Models;
+using TEMPO.ServiceLayer.Interfaces;
 using TEMPO.ServiceLayer.Factories;
+using TEMPO.Domain.Models;
+using TEMPO.Domain.Common;
 
 namespace TEMPO.ServiceLayer.Services;
 
@@ -12,13 +13,18 @@ public class UserService(UserManager<TempoUser> userManager) : IUserService
 {
   private readonly UserManager<TempoUser> _userManager = userManager;
 
-  public async Task<UserModel> Get(string id)
+  public async Task<ServiceResult<UserModel>> Get(string email)
   {
-    if (string.IsNullOrWhiteSpace(id))
-      throw new ArgumentException("User ID cannot be null or empty.", nameof(id));
-    
-    var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
-    return user != null ? UserFactory.ToModel(user) : null;
+    if (string.IsNullOrWhiteSpace(email))
+      throw new ArgumentException("Email cannot be null or empty.", nameof(email));
+
+    var user = await _userManager.Users
+    .FirstOrDefaultAsync(u => u.Email == email);
+
+    if (user == null)
+      return ServiceResult<UserModel>.Failure("User not found.");
+
+    return ServiceResult<UserModel>.SuccessResult(UserFactory.ToModel(user));
   }
 
   public async Task<IdentityResult> Create(UserModel user)
