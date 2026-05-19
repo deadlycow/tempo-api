@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TEMPO.DataLayer.Contexts;
 using TEMPO.DataLayer.Entities;
+using TEMPO.ServiceLayer.Identity.Seed;
 using TEMPO.ServiceLayer.Interfaces;
 using TEMPO.ServiceLayer.Services;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +27,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await RoleSeeder.SeedAsync(services);
+}
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,18 +1,19 @@
 using TEMPO.DataLayer.Entities;
 using TEMPO.Domain.Models;
+using TEMPO.ServiceLayer.Command;
 
 namespace TEMPO.ServiceLayer.Factories;
 
 public class UserFactory
 {
-  public static TempoUser ToEntity(UserModel userModel)
+  public static TempoUser ToEntity(CreateUserCommand command)
   {
-    ArgumentNullException.ThrowIfNull(userModel);
+    ArgumentNullException.ThrowIfNull(command);
 
     return new TempoUser
     {
-      UserName = userModel.UserName,
-      Email = userModel.Email
+      UserName = command.UserName,
+      Email = command.Email
     };
   }
   public static UserModel ToModel(TempoUser entity)

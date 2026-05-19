@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Api.Dtos;
 using TEMPO.Domain.Models;
+using TEMPO.ServiceLayer.Command;
 using TEMPO.ServiceLayer.Interfaces;
 
 namespace TEMPO.Api.Controllers;
@@ -20,26 +21,45 @@ public class UserController(IUserService userService) : ControllerBase
         return Ok(user.Data);
     }
     [HttpPost]
-    public async Task<IActionResult> Post(UserModel user)
+    public async Task<IActionResult> Post(CreateUserRequest request)
     {
-        if (!ModelState.IsValid)
+        var command = new CreateUserCommand
         {
-            return BadRequest(ModelState);
-        }
-        var result = await userService.Create(user);
+            UserName = request.UserName,
+            Email = request.Email,
+            Password = request.Password
+        };
+
+        var result = await userService.Create(command);
         if (!result.Succeeded)
             return BadRequest(result.Errors);
 
         return Ok(new { Message = "User created successfully!" });
     }
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromQuery] DeleteUserRequest request)
     {
-        return Ok(new { Message = $"Value with ID {id} deleted successfully!" });
+        var result = await userService.Delete(request.Id);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+
+        return Ok(new { Message = $"Value with ID {request.Id} deleted successfully!" });
     }
-    [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] object value)
+    [HttpPut]
+    public async Task<IActionResult> Put([FromQuery] UpdateUserRequest request)
     {
-        return Ok(new { Message = $"Value with ID {id} updated successfully!" });
+        var command = new UpdateUserCommand
+        {
+            Id = request.Id,
+            UserName = request.UserName,
+            Email = request.Email,
+            PhoneNumber = request.PhoneNumber
+        };
+
+        var result = await userService.Update(command);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+
+        return Ok(new { Message = $"Value with ID {request.Id} updated successfully!" });
     }
 }
