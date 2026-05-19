@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TEMPO.DataLayer.Contexts;
 using TEMPO.DataLayer.Entities;
+using TEMPO.ServiceLayer.Interfaces;
+using TEMPO.ServiceLayer.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,9 +15,16 @@ builder.Services.AddIdentity<TempoUser, IdentityRole>(options => options.SignIn.
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoles<IdentityRole>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressModelStateInvalidFilter = false;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

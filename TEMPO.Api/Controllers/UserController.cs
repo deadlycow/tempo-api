@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TEMPO.Api.Dtos;
 using TEMPO.Domain.Models;
 using TEMPO.ServiceLayer.Interfaces;
 
@@ -9,9 +10,14 @@ namespace TEMPO.Api.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get()
+    public async Task<ActionResult<UserModel>> Get([FromQuery] GetUserRequest request)
     {
-        return Ok(new { Message = "Hello from UserController!" });
+        var user = await userService.Get(request.Email);
+
+        if (!user.Success)
+            return NotFound(new { Message = user.ErrorMessage });
+
+        return Ok(user.Data);
     }
     [HttpPost]
     public async Task<IActionResult> Post(UserModel user)
