@@ -6,17 +6,17 @@ namespace TEMPO.ServiceLayer.Factories;
 
 public class UserFactory
 {
-  public static TempoUser ToEntity(CreateUserCommand command)
+  public static AppUser ToEntity(CreateUserCommand command)
   {
     ArgumentNullException.ThrowIfNull(command);
 
-    return new TempoUser
+    return new AppUser
     {
       UserName = command.UserName,
       Email = command.Email
     };
   }
-  public static UserModel ToModel(TempoUser entity)
+  public static UserModel ToModel(AppUser entity)
   {
     ArgumentNullException.ThrowIfNull(entity);
 

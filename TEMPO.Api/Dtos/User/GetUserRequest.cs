@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TEMPO.Api.Dtos;
+namespace TEMPO.Api.Dtos.User;
 
 public class GetUserRequest
 {

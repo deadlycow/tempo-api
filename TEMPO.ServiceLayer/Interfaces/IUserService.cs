@@ -8,6 +8,7 @@ namespace TEMPO.ServiceLayer.Interfaces;
 public interface IUserService
 {
   Task<ServiceResult<UserModel>> Get(string email);
+  Task<ServiceResult<List<UserModel>>> GetAll();
   Task<IdentityResult> Create(CreateUserCommand command);
   Task<IdentityResult> Delete(string id);
   Task<IdentityResult> Update(UpdateUserCommand command);

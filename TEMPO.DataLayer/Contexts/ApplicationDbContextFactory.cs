@@ -8,7 +8,7 @@ namespace TEMPO.DataLayer.Contexts;
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Projects\\tempo-backend\\TEMPO.DataLayer\\tempo.mdf;Integrated Security=True;Connect Timeout=30");
+            optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=tempo;AttachDbFilename=C:\\Projects\\tempo-backend\\TEMPO.DataLayer\\db\\tempo.mdf;Integrated Security=True;Connect Timeout=30");
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }

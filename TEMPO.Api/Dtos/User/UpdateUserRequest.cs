@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TEMPO.Api.Dtos;
+namespace TEMPO.Api.Dtos.User;
 
-public class UpdateUserRequest
+public record UpdateUserRequest
 {
   [Required]
   public required string Id { get; set; }

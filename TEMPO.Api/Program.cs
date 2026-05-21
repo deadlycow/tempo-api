@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TEMPO.DataLayer.Contexts;
 using TEMPO.DataLayer.Entities;
+using TEMPO.DataLayer.Repositories;
 using TEMPO.ServiceLayer.Identity.Seed;
 using TEMPO.ServiceLayer.Interfaces;
 using TEMPO.ServiceLayer.Services;
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<TempoUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoles<IdentityRole>();
 
@@ -25,7 +26,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<TimeEntryService>();
+builder.Services.AddScoped<TimeEntryRepository>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

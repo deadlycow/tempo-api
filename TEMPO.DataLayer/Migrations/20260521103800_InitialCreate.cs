@@ -178,7 +178,7 @@ namespace TEMPO.DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TimeReports",
+                name: "TimeEntries",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -186,29 +186,23 @@ namespace TEMPO.DataLayer.Migrations
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     HoursWorked = table.Column<double>(type: "float", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TimeReportId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ProjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TimeReports", x => x.Id);
+                    table.PrimaryKey("PK_TimeEntries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TimeReports_AspNetUsers_EmployeeId",
+                        name: "FK_TimeEntries_AspNetUsers_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TimeReports_Projects_ProjectId",
+                        name: "FK_TimeEntries_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TimeReports_TimeReports_TimeReportId",
-                        column: x => x.TimeReportId,
-                        principalTable: "TimeReports",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -256,19 +250,14 @@ namespace TEMPO.DataLayer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TimeReports_EmployeeId",
-                table: "TimeReports",
+                name: "IX_TimeEntries_EmployeeId",
+                table: "TimeEntries",
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TimeReports_ProjectId",
-                table: "TimeReports",
+                name: "IX_TimeEntries_ProjectId",
+                table: "TimeEntries",
                 column: "ProjectId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TimeReports_TimeReportId",
-                table: "TimeReports",
-                column: "TimeReportId");
         }
 
         /// <inheritdoc />
@@ -290,7 +279,7 @@ namespace TEMPO.DataLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "TimeReports");
+                name: "TimeEntries");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

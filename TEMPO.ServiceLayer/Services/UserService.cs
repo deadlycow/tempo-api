@@ -10,9 +10,9 @@ using TEMPO.ServiceLayer.Command;
 
 namespace TEMPO.ServiceLayer.Services;
 
-public class UserService(UserManager<TempoUser> userManager) : IUserService
+public class UserService(UserManager<AppUser> userManager) : IUserService
 {
-  private readonly UserManager<TempoUser> _userManager = userManager;
+  private readonly UserManager<AppUser> _userManager = userManager;
 
   public async Task<ServiceResult<UserModel>> Get(string email)
   {
@@ -26,6 +26,16 @@ public class UserService(UserManager<TempoUser> userManager) : IUserService
       return ServiceResult<UserModel>.Failure("User not found.");
 
     return ServiceResult<UserModel>.SuccessResult(UserFactory.ToModel(user));
+  }
+  public async Task<ServiceResult<List<UserModel>>> GetAll()
+  {
+    var users = await _userManager.Users.ToListAsync();
+
+    if (users == null || users.Count == 0)
+      return ServiceResult<List<UserModel>>.Failure("No users found.");
+
+    var userModels = users.Select(UserFactory.ToModel).ToList();
+    return ServiceResult<List<UserModel>>.SuccessResult(userModels);
   }
 
   public async Task<IdentityResult> Create(CreateUserCommand command)
@@ -85,7 +95,7 @@ public class UserService(UserManager<TempoUser> userManager) : IUserService
         Code = "UserNotFound",
         Description = "User not found."
       });
-      
+
     var actions = new List<Func<Task<IdentityResult?>>>();
 
     if (!string.IsNullOrWhiteSpace(command.UserName) && command.UserName != user.UserName)
@@ -107,4 +117,6 @@ public class UserService(UserManager<TempoUser> userManager) : IUserService
 
     return await _userManager.UpdateAsync(user);
   }
+
+
 }

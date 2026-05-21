@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TEMPO.Api.Dtos;
+namespace TEMPO.Api.Dtos.User;
 
-public class CreateUserRequest
+public record CreateUserRequest
 {
   [Required]
   [StringLength(25, MinimumLength = 3)]

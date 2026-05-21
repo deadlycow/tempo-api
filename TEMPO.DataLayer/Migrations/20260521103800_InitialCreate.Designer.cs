@@ -12,7 +12,7 @@ using TEMPO.DataLayer.Contexts;
 namespace TEMPO.DataLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260515123849_InitialCreate")]
+    [Migration("20260521103800_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -158,31 +158,7 @@ namespace TEMPO.DataLayer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TEMPO.DataLayer.Entities.Project", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("TEMPO.DataLayer.Entities.TempoUser", b =>
+            modelBuilder.Entity("TEMPO.DataLayer.Entities.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -252,7 +228,31 @@ namespace TEMPO.DataLayer.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("TEMPO.DataLayer.Entities.TimeReport", b =>
+            modelBuilder.Entity("TEMPO.DataLayer.Entities.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("TEMPO.DataLayer.Entities.TimeEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -274,18 +274,13 @@ namespace TEMPO.DataLayer.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TimeReportId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("TimeReportId");
-
-                    b.ToTable("TimeReports");
+                    b.ToTable("TimeEntries");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -299,7 +294,7 @@ namespace TEMPO.DataLayer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("TEMPO.DataLayer.Entities.TempoUser", null)
+                    b.HasOne("TEMPO.DataLayer.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -308,7 +303,7 @@ namespace TEMPO.DataLayer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("TEMPO.DataLayer.Entities.TempoUser", null)
+                    b.HasOne("TEMPO.DataLayer.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -323,7 +318,7 @@ namespace TEMPO.DataLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TEMPO.DataLayer.Entities.TempoUser", null)
+                    b.HasOne("TEMPO.DataLayer.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -332,58 +327,49 @@ namespace TEMPO.DataLayer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("TEMPO.DataLayer.Entities.TempoUser", null)
+                    b.HasOne("TEMPO.DataLayer.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TEMPO.DataLayer.Entities.TempoUser", b =>
+            modelBuilder.Entity("TEMPO.DataLayer.Entities.AppUser", b =>
                 {
                     b.HasOne("TEMPO.DataLayer.Entities.Project", null)
                         .WithMany("Employees")
                         .HasForeignKey("ProjectId");
                 });
 
-            modelBuilder.Entity("TEMPO.DataLayer.Entities.TimeReport", b =>
+            modelBuilder.Entity("TEMPO.DataLayer.Entities.TimeEntry", b =>
                 {
-                    b.HasOne("TEMPO.DataLayer.Entities.TempoUser", "Employee")
-                        .WithMany("TimeReports")
+                    b.HasOne("TEMPO.DataLayer.Entities.AppUser", "Employee")
+                        .WithMany("TimeEntries")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TEMPO.DataLayer.Entities.Project", "Project")
-                        .WithMany("TimeReports")
+                        .WithMany("TimeEntries")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("TEMPO.DataLayer.Entities.TimeReport", null)
-                        .WithMany("TimeReports")
-                        .HasForeignKey("TimeReportId");
 
                     b.Navigation("Employee");
 
                     b.Navigation("Project");
                 });
 
+            modelBuilder.Entity("TEMPO.DataLayer.Entities.AppUser", b =>
+                {
+                    b.Navigation("TimeEntries");
+                });
+
             modelBuilder.Entity("TEMPO.DataLayer.Entities.Project", b =>
                 {
                     b.Navigation("Employees");
 
-                    b.Navigation("TimeReports");
-                });
-
-            modelBuilder.Entity("TEMPO.DataLayer.Entities.TempoUser", b =>
-                {
-                    b.Navigation("TimeReports");
-                });
-
-            modelBuilder.Entity("TEMPO.DataLayer.Entities.TimeReport", b =>
-                {
-                    b.Navigation("TimeReports");
+                    b.Navigation("TimeEntries");
                 });
 #pragma warning restore 612, 618
         }

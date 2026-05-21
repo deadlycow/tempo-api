@@ -9,6 +9,7 @@ obj/
 *.sln.docstates
 *.ldf
 *.mdf
+db/
 
 # Visual Studio
 .vs/

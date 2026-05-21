@@ -6,6 +6,6 @@ public class Project
     public string? Description { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public ICollection<TimeReport> TimeReports { get; set; } = new List<TimeReport>();
-    public ICollection<TempoUser> Employees { get; set; } = new List<TempoUser>();
+    public ICollection<TimeEntry> TimeEntries { get; set; } = new List<TimeEntry>();
+    public ICollection<AppUser> Employees { get; set; } = new List<AppUser>();
 }

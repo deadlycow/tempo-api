@@ -4,19 +4,25 @@ using TEMPO.DataLayer.Entities;
 
 namespace TEMPO.DataLayer.Contexts;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<TempoUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<AppUser>(options)
 {
-  public DbSet<TimeReport> TimeReports { get; set; } = null!;
+  public DbSet<TimeEntry> TimeEntries { get; set; } = null!;
   public DbSet<Project> Projects { get; set; } = null!;
-  public DbSet<TempoUser> TempoUsers { get; set; } = null!;
+  public DbSet<AppUser> AppUsers { get; set; } = null!;
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
 
-    modelBuilder.Entity<TimeReport>()
-     .HasOne(tr => tr.Employee)
-     .WithMany(u => u.TimeReports)
-     .HasForeignKey(tr => tr.EmployeeId)
+    modelBuilder.Entity<TimeEntry>()
+     .HasOne(te => te.Employee)
+     .WithMany(u => u.TimeEntries)
+     .HasForeignKey(te => te.EmployeeId)
+     .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<TimeEntry>()
+     .HasOne(te => te.Project)
+     .WithMany(p => p.TimeEntries)
+     .HasForeignKey(te => te.ProjectId)
      .OnDelete(DeleteBehavior.Cascade);
   }
 }

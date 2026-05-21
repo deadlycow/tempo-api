@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Api.Dtos;
+using TEMPO.Api.Dtos.User;
 using TEMPO.Domain.Models;
 using TEMPO.ServiceLayer.Command;
 using TEMPO.ServiceLayer.Interfaces;
@@ -19,6 +19,16 @@ public class UserController(IUserService userService) : ControllerBase
             return NotFound(new { Message = user.ErrorMessage });
 
         return Ok(user.Data);
+    }
+    [HttpGet("all")]
+    public async Task<ActionResult<List<UserModel>>> GetAll()
+    {
+        var users = await userService.GetAll();
+
+        if (!users.Success)
+            return NotFound(new { Message = users.ErrorMessage });
+
+        return Ok(users.Data);
     }
     [HttpPost]
     public async Task<IActionResult> Post(CreateUserRequest request)
