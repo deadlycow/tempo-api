@@ -27,7 +27,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<TimeEntryService>();
+builder.Services.AddScoped<ProjectService>();
+
 builder.Services.AddScoped<TimeEntryRepository>();
+builder.Services.AddScoped<ProjectRepository>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
