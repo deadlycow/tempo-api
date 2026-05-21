@@ -6,12 +6,13 @@ namespace TEMPO.DataLayer.Repositories;
 public class TimeEntryRepository(ApplicationDbContext context)
 {
   private readonly ApplicationDbContext _context = context;
+  private readonly DbSet<TimeEntry> _timeEntries = context.Set<TimeEntry>();
   public async Task<List<TimeEntry>> GetAllByUserId(string userId)
   {
     if (string.IsNullOrWhiteSpace(userId))
       throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
 
-    return await _context.TimeEntries
+    return await _timeEntries
       .Where(te => te.EmployeeId == userId)
       .ToListAsync();
   }
@@ -20,7 +21,7 @@ public class TimeEntryRepository(ApplicationDbContext context)
     if (id == Guid.Empty)
       throw new ArgumentException("ID cannot be empty.", nameof(id));
 
-    return await _context.TimeEntries
+    return await _timeEntries
       .FirstOrDefaultAsync(te => te.Id == id);
   }
   public async Task CreateAsync(TimeEntry timeEntry)
@@ -28,7 +29,7 @@ public class TimeEntryRepository(ApplicationDbContext context)
     if (timeEntry == null)
       throw new ArgumentNullException(nameof(timeEntry), "Time entry cannot be null.");
 
-    await _context.TimeEntries.AddAsync(timeEntry);
+    await _timeEntries.AddAsync(timeEntry);
     await _context.SaveChangesAsync();
   }
 }
