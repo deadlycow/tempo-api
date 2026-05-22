@@ -1,37 +1,43 @@
 using TEMPO.DataLayer.Repositories;
+using TEMPO.Domain.Common;
 using TEMPO.Domain.Models;
 using TEMPO.ServiceLayer.Command;
 using TEMPO.ServiceLayer.Factories;
+using TEMPO.ServiceLayer.Interfaces;
 
 namespace TEMPO.ServiceLayer.Services;
 
-public class ProjectService(ProjectRepository projectRepository)
+public class ProjectService(ProjectRepository projectRepository) : IProjectService
 {
   private readonly ProjectRepository _projectRepository = projectRepository;
-  public async Task<List<ProjectModel>> GetAllAsync()
+  public async Task<ServiceResult<IEnumerable<ProjectModel>>> GetAllAsync()
   {
     var projects = await _projectRepository.GetAllAsync();
-    return projects.Select(ProjectFactory.ToModel).ToList();
+    return ServiceResult<IEnumerable<ProjectModel>>.SuccessResult(ProjectFactory.ToModelList(projects));
   }
-  public async Task<string> GetProjectByIdAsync(Guid id)
+  public async Task<ServiceResult<ProjectModel>> GetByIdAsync(Guid id)
   {
-    // Logic to retrieve a specific project by ID from the database
-    return $"Project with ID {id}";
+    if (id == Guid.Empty)
+          return ServiceResult<ProjectModel>.Failure("Invalid project ID.");
+    
+    var project = await _projectRepository.GetByIdAsync(id);
+    if (project == null)
+          return ServiceResult<ProjectModel>.Failure($"Project with ID {id} not found.");
+
+    return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(project));
   }
-  public async Task<ProjectModel> CreateProjectAsync(CreateProjectCommand command)
+  public async Task<ServiceResult<ProjectModel>> CreateAsync(CreateProjectCommand command)
   {
     var project = ProjectFactory.ToEntity(command);
-    project = await _projectRepository.CreateProjectAsync(project);
-    return ProjectFactory.ToModel(project);
+    project = await _projectRepository.CreateAsync(project);
+    return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(project));
   }
-  public async Task<string> DeleteProjectAsync(Guid id)
+  public async Task<ServiceResult<string>> DeleteAsync(Guid id)
   {
-    // Logic to delete a project from the database
-    return $"Project with ID {id} deleted successfully.";
+    return ServiceResult<string>.SuccessResult($"Project with ID {id} deleted successfully.");
   }
-  public async Task<string> UpdateProjectAsync(Guid id, string projectName)
+  public async Task<ServiceResult<string>> UpdateAsync(UpdateProjectCommand command)
   {
-    // Logic to update a project in the database
-    return $"Project '{projectName}' updated successfully.";
+    return ServiceResult<string>.SuccessResult($"Project '{command.Name}' updated successfully.");
   }
 }

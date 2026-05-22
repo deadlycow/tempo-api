@@ -20,9 +20,10 @@ public class ProjectController(ProjectService projectService) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromBody] GetProjectRequest request)
     {
-        // Logic to retrieve a specific project
-        return Ok($"Project with ID {request.Id}");
+        throw new NotImplementedException();
+        // return Ok($"Project with ID {request.Id}");
     }
+
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateProjectRequest request)
@@ -34,20 +35,20 @@ public class ProjectController(ProjectService projectService) : ControllerBase
             StartDate = request.StartDate,
             EndDate = request.EndDate
         };
-        var result = await _projectService.CreateProjectAsync(command);
+        var result = await _projectService.CreateAsync(command);
         // Logic to create a new project
         return Ok(result);
     }
     [HttpDelete]
-    public async Task<IActionResult> DeleteProject(DeleteProjectRequest request)
+    public async Task<IActionResult> Delete(DeleteProjectRequest request)
     {
         // Logic to delete a project
         return Ok($"Project with ID {request.Id} deleted successfully.");
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProject(int id, [FromBody] string projectName)
+    public async Task<IActionResult> Update(UpdateProjectRequest request)
     {
         // Logic to update a project
-        return Ok($"Project '{projectName}' updated successfully.");
+        return Ok($"Project '{request.Name}' updated successfully.");
     }
 }

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TEMPO.DataLayer.Contexts;
 using TEMPO.DataLayer.Entities;
-using TEMPO.Domain.Models;
 
 namespace TEMPO.DataLayer.Repositories;
 
@@ -9,31 +8,32 @@ public class ProjectRepository(ApplicationDbContext dbContext)
 {
   private readonly ApplicationDbContext _dbContext = dbContext;
   private readonly DbSet<Project> _projects = dbContext.Set<Project>();
-  public async Task<List<Project>> GetAllAsync()
+  public async Task<IEnumerable<Project>> GetAllAsync()
   {
-    // Logic to retrieve projects from the database
     return await _projects.ToListAsync();
   }
-  public async Task<string> GetProjectByIdAsync(Guid id)
+  public async Task<Project> GetByIdAsync(Guid id)
   {
-    // Logic to retrieve a specific project by ID from the database
-    return $"Project with ID {id}";
+    return await _projects.FindAsync(id) ?? throw new KeyNotFoundException($"Project with ID {id} not found.");
   }
-  public async Task<Project> CreateProjectAsync(Project project)
+  public async Task<Project> CreateAsync(Project project)
   {
     await _projects.AddAsync(project);
     await _dbContext.SaveChangesAsync();
 
     return project;
   }
-  public async Task<string> DeleteProjectAsync(Guid id)
+  public async Task<string> DeleteAsync(Guid id)
   {
-    // Logic to delete a project from the database
+    var project = await GetByIdAsync(id);
+    _projects.Remove(project);
+    await _dbContext.SaveChangesAsync();
     return $"Project with ID {id} deleted successfully.";
   }
-  public async Task<string> UpdateProjectAsync(Guid id, string projectName)
+  public async Task<string> UpdateAsync(Project project)
   {
-    // Logic to update a project in the database
-    return $"Project '{projectName}' updated successfully.";
+    _projects.Update(project);
+    await _dbContext.SaveChangesAsync();
+    return $"Project '{project.Name}' updated successfully.";
   }
 }
