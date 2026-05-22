@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Api.Dtos.User;
+using TEMPO.Api.Dtos;
 using TEMPO.Domain.Models;
 using TEMPO.ServiceLayer.Command;
 using TEMPO.ServiceLayer.Interfaces;

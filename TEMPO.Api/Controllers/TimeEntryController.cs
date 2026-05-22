@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Api.Dtos.TimeReport;
+using TEMPO.Api.Dtos;
 using TEMPO.ServiceLayer.Services;
 
 namespace TEMPO.Api.Controllers;

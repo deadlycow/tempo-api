@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Api.Dtos.Project;
+using TEMPO.Api.Dtos;
 using TEMPO.ServiceLayer.Command;
 using TEMPO.ServiceLayer.Services;
 
