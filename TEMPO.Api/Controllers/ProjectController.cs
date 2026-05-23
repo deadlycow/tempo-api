@@ -1,31 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Api.Dtos;
+using TEMPO.Domain.Models;
 using TEMPO.ServiceLayer.Command;
-using TEMPO.ServiceLayer.Services;
+using TEMPO.ServiceLayer.Interfaces;
 
 namespace TEMPO.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProjectController(ProjectService projectService) : ControllerBase
+public class ProjectController(IProjectService projectService) : ControllerBase
 {
-    private readonly ProjectService _projectService = projectService;
+    private readonly IProjectService _projectService = projectService;
     [HttpGet("all")]
+    [ProducesResponseType(typeof(IEnumerable<ProjectModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAll()
     {
         var projects = await _projectService.GetAllAsync();
-        // Logic to retrieve projects
+        if (projects == null || !projects.Success)
+            return NotFound(projects?.ErrorMessage ?? "No projects found.");
         return Ok(projects);
     }
     [HttpGet]
-    public async Task<IActionResult> Get([FromBody] GetProjectRequest request)
+    [ProducesResponseType(typeof(ProjectModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Get([FromQuery] GetProjectRequest request)
     {
-        throw new NotImplementedException();
-        // return Ok($"Project with ID {request.Id}");
+        var result = await _projectService.GetByIdAsync(request.Id);
+        if (!result.Success)
+            return NotFound(result.ErrorMessage);
+        return Ok(result.Data);
     }
 
 
     [HttpPost]
+    [ProducesResponseType(typeof(CreateProjectRequest), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateProjectRequest request)
     {
         var command = new CreateProjectCommand
@@ -36,19 +46,38 @@ public class ProjectController(ProjectService projectService) : ControllerBase
             EndDate = request.EndDate
         };
         var result = await _projectService.CreateAsync(command);
-        // Logic to create a new project
-        return Ok(result);
+        if (!result.Success)
+            return BadRequest(result.ErrorMessage);
+        return CreatedAtAction(nameof(Get), new { id = result.Data?.Id }, result.Data);
     }
     [HttpDelete]
-    public async Task<IActionResult> Delete(DeleteProjectRequest request)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete([FromQuery] DeleteProjectRequest request)
     {
-        // Logic to delete a project
-        return Ok($"Project with ID {request.Id} deleted successfully.");
+        var result = await _projectService.DeleteAsync(request.Id);
+
+        if (!result.Success)
+            return NotFound(result.ErrorMessage);
+        
+        return NoContent();
     }
-    [HttpPut("{id}")]
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(UpdateProjectRequest request)
     {
-        // Logic to update a project
-        return Ok($"Project '{request.Name}' updated successfully.");
+        var command = new UpdateProjectCommand
+        {
+            Id = request.Id,
+            Name = request.Name,
+            Description = request.Description,
+            StartDate = request.StartDate,
+            EndDate = request.EndDate
+        };
+        var result = await _projectService.UpdateAsync(command);
+        if (!result.Success)
+            return BadRequest(result.ErrorMessage);
+        return Ok(result.Data);
     }
 }

@@ -27,15 +27,15 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
 
     return ServiceResult<UserModel>.SuccessResult(UserFactory.ToModel(user));
   }
-  public async Task<ServiceResult<List<UserModel>>> GetAll()
+  public async Task<ServiceResult<IEnumerable<UserModel>>> GetAll()
   {
     var users = await _userManager.Users.ToListAsync();
 
     if (users == null || users.Count == 0)
-      return ServiceResult<List<UserModel>>.Failure("No users found.");
+      return ServiceResult<IEnumerable<UserModel>>.Failure("No users found.");
 
-    var userModels = users.Select(UserFactory.ToModel).ToList();
-    return ServiceResult<List<UserModel>>.SuccessResult(userModels);
+    var userModels = UserFactory.ToModelList(users);
+    return ServiceResult<IEnumerable<UserModel>>.SuccessResult(userModels);
   }
 
   public async Task<IdentityResult> Create(CreateUserCommand command)
@@ -46,8 +46,8 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     if (existingUser != null)
       return IdentityResult.Failed(new IdentityError
       {
-        Code = "UserAlreadyExists",
-        Description = "A user with this email already exists."
+        Code = "409",
+        Description = "Email already exists."
       });
 
     var user = UserFactory.ToEntity(command);
@@ -56,10 +56,8 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     if (!result.Succeeded)
       return result;
 
-    if (!string.IsNullOrWhiteSpace(command.Role.ToString()))
-    {
-      await _userManager.AddToRoleAsync(user, command.Role.ToString());
-    }
+    await _userManager.AddToRoleAsync(user, command.Role.ToString());
+
     return result;
   }
 
@@ -74,7 +72,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     if (user == null)
       return IdentityResult.Failed(new IdentityError
       {
-        Code = "UserNotFound",
+        Code = "404",
         Description = "User not found."
       });
 
@@ -92,7 +90,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     if (user == null)
       return IdentityResult.Failed(new IdentityError
       {
-        Code = "UserNotFound",
+        Code = "404",
         Description = "User not found."
       });
 
@@ -117,6 +115,4 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
 
     return await _userManager.UpdateAsync(user);
   }
-
-
 }

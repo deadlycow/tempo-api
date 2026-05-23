@@ -13,17 +13,21 @@ public record CreateProjectRequest
 
 public record GetProjectRequest
 {
-  public Guid Id { get; set; }
+  [Required]
+  public required Guid Id { get; set; }
 }
 
 public record DeleteProjectRequest
 {
-  public Guid Id { get; set; }
+  [Required]
+  public required Guid Id { get; set; }
 }
 
 public record UpdateProjectRequest
 {
+  [Required]
   public required Guid Id { get; set; }
+  [Required]
   public required string Name { get; set; }
   public string? Description { get; set; }
   public DateTime? StartDate { get; set; }

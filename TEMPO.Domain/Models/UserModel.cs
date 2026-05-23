@@ -4,10 +4,9 @@ namespace TEMPO.Domain.Models;
 
 public class UserModel
 {
-  [Required]
-  [StringLength(25, MinimumLength = 3)]
-  public required string UserName { get; set; }
-  [Required]
+  public string? UserName { get; set; }
   [EmailAddress]
-  public required string Email { get; set; }
+  public string? Email { get; set; }
+  [Phone]
+  public string? PhoneNumber { get; set; }
 }

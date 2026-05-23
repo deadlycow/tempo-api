@@ -18,11 +18,11 @@ public class ProjectService(ProjectRepository projectRepository) : IProjectServi
   public async Task<ServiceResult<ProjectModel>> GetByIdAsync(Guid id)
   {
     if (id == Guid.Empty)
-          return ServiceResult<ProjectModel>.Failure("Invalid project ID.");
-    
+      return ServiceResult<ProjectModel>.Failure("Invalid project ID.");
+
     var project = await _projectRepository.GetByIdAsync(id);
     if (project == null)
-          return ServiceResult<ProjectModel>.Failure($"Project with ID {id} not found.");
+      return ServiceResult<ProjectModel>.Failure($"Project with ID {id} not found.");
 
     return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(project));
   }
@@ -32,9 +32,14 @@ public class ProjectService(ProjectRepository projectRepository) : IProjectServi
     project = await _projectRepository.CreateAsync(project);
     return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(project));
   }
-  public async Task<ServiceResult<string>> DeleteAsync(Guid id)
+  public async Task<ServiceResult> DeleteAsync(Guid id)
   {
-    return ServiceResult<string>.SuccessResult($"Project with ID {id} deleted successfully.");
+    var project = await _projectRepository.GetByIdAsync(id);
+    if (project == null)
+      return ServiceResult.Failure($"Project with ID {id} not found.");
+
+    await _projectRepository.DeleteAsync(id);
+    return ServiceResult.SuccessResult();
   }
   public async Task<ServiceResult<string>> UpdateAsync(UpdateProjectCommand command)
   {

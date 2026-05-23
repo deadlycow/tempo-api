@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using TEMPO.DataLayer.Contexts;
 using TEMPO.DataLayer.Entities;
+using TEMPO.DataLayer.Interfaces;
 
 namespace TEMPO.DataLayer.Repositories;
 
-public class ProjectRepository(ApplicationDbContext dbContext)
+public class ProjectRepository(ApplicationDbContext dbContext) : IProjectRepository
 {
   private readonly ApplicationDbContext _dbContext = dbContext;
   private readonly DbSet<Project> _projects = dbContext.Set<Project>();
@@ -12,9 +13,9 @@ public class ProjectRepository(ApplicationDbContext dbContext)
   {
     return await _projects.ToListAsync();
   }
-  public async Task<Project> GetByIdAsync(Guid id)
+  public async Task<Project?> GetByIdAsync(Guid id)
   {
-    return await _projects.FindAsync(id) ?? throw new KeyNotFoundException($"Project with ID {id} not found.");
+    return await _projects.FirstOrDefaultAsync(p => p.Id == id);
   }
   public async Task<Project> CreateAsync(Project project)
   {
@@ -23,12 +24,15 @@ public class ProjectRepository(ApplicationDbContext dbContext)
 
     return project;
   }
-  public async Task<string> DeleteAsync(Guid id)
+  public async Task DeleteAsync(Guid id)
   {
-    var project = await GetByIdAsync(id);
+    var project = await _projects.FindAsync(id);
+
+    if (project == null)
+      return;
+
     _projects.Remove(project);
     await _dbContext.SaveChangesAsync();
-    return $"Project with ID {id} deleted successfully.";
   }
   public async Task<string> UpdateAsync(Project project)
   {

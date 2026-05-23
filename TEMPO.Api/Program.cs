@@ -8,6 +8,7 @@ using TEMPO.ServiceLayer.Services;
 using TEMPO.DataLayer.Contexts;
 using TEMPO.DataLayer.Entities;
 using TEMPO.DataLayer.Repositories;
+using TEMPO.DataLayer.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,7 @@ builder.Services.AddScoped<TimeEntryService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 
 builder.Services.AddScoped<TimeEntryRepository>();
-builder.Services.AddScoped<ProjectRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 var app = builder.Build();
 

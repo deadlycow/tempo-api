@@ -14,7 +14,6 @@ public static class ProjectFactory
         StartDate = command.StartDate,
         EndDate = command.EndDate
     };
-    public static IEnumerable<Project> ToEntityList(IEnumerable<CreateProjectCommand> commands) => commands.Select(ToEntity).ToList();
     public static ProjectModel ToModel(Project project) => new()
     {
         Id = project.Id,
@@ -23,7 +22,7 @@ public static class ProjectFactory
         StartDate = project.StartDate,
         EndDate = project.EndDate
     };
-    public static IEnumerable<ProjectModel> ToModelList(IEnumerable<Project> projects) => projects.Select(ToModel).ToList();
+    public static IEnumerable<ProjectModel> ToModelList(IEnumerable<Project> projects) => [.. projects.Select(ToModel)];
     // public static List<ProjectModel> ToModelList(List<Project> projects)
     // {
     //     return projects.Select(ToModel).ToList();

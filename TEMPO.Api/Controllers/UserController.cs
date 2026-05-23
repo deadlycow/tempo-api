@@ -11,6 +11,8 @@ namespace TEMPO.Api.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet]
+    [ProducesResponseType(typeof(UserModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserModel>> Get([FromQuery] GetUserRequest request)
     {
         var user = await userService.Get(request.Email);
@@ -21,6 +23,8 @@ public class UserController(IUserService userService) : ControllerBase
         return Ok(user.Data);
     }
     [HttpGet("all")]
+    [ProducesResponseType(typeof(List<UserModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<UserModel>>> GetAll()
     {
         var users = await userService.GetAll();
@@ -31,6 +35,8 @@ public class UserController(IUserService userService) : ControllerBase
         return Ok(users.Data);
     }
     [HttpPost]
+    [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Post(CreateUserRequest request)
     {
         var command = new CreateUserCommand
@@ -42,20 +48,24 @@ public class UserController(IUserService userService) : ControllerBase
 
         var result = await userService.Create(command);
         if (!result.Succeeded)
-            return BadRequest(result.Errors);
+            return NotFound(result.Errors);
 
-        return Ok(new { Message = "User created successfully!" });
+        return CreatedAtAction(nameof(Get), new { Message = $"User created successfully!" });
     }
     [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromQuery] DeleteUserRequest request)
     {
         var result = await userService.Delete(request.Id);
         if (!result.Succeeded)
-            return BadRequest(result.Errors);
+            return NotFound(result.Errors);
 
-        return Ok(new { Message = $"Value with ID {request.Id} deleted successfully!" });
+        return NoContent();
     }
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Put([FromQuery] UpdateUserRequest request)
     {
         var command = new UpdateUserCommand
@@ -68,7 +78,7 @@ public class UserController(IUserService userService) : ControllerBase
 
         var result = await userService.Update(command);
         if (!result.Succeeded)
-            return BadRequest(result.Errors);
+            return NotFound(result.Errors);
 
         return Ok(new { Message = $"Value with ID {request.Id} updated successfully!" });
     }

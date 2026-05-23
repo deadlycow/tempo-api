@@ -13,17 +13,20 @@ public class UserFactory
     return new AppUser
     {
       UserName = command.UserName,
-      Email = command.Email
+      Email = command.Email,
+      PhoneNumber = command.PhoneNumber
     };
   }
   public static UserModel ToModel(AppUser entity)
   {
     ArgumentNullException.ThrowIfNull(entity);
 
-    return new UserModel
+    return new()
     {
       UserName = entity.UserName,
-      Email = entity.Email
+      Email = entity.Email,
+      PhoneNumber = entity.PhoneNumber
     };
   }
+  public static IEnumerable<UserModel> ToModelList(IEnumerable<AppUser> entities) => [.. entities.Select(ToModel)];
 }
