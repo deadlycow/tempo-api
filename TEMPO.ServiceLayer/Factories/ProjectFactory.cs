@@ -23,9 +23,11 @@ public static class ProjectFactory
         EndDate = project.EndDate
     };
     public static IEnumerable<ProjectModel> ToModelList(IEnumerable<Project> projects) => [.. projects.Select(ToModel)];
-    // public static List<ProjectModel> ToModelList(List<Project> projects)
-    // {
-    //     return projects.Select(ToModel).ToList();
-    // }
-    // public static IEnumerable<ProjectDto> CreateList(IEnumerable<ProjectEntity> entities) => entities.Select(Create).ToList();
+    public static void UpdateEntity(Project existingProject, UpdateProjectCommand command)
+    {
+        existingProject.Name = command.Name;
+        existingProject.Description = command.Description;
+        existingProject.StartDate = command.StartDate;
+        existingProject.EndDate = command.EndDate;
+    }
 }

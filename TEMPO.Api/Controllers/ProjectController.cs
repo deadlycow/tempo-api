@@ -10,6 +10,16 @@ namespace TEMPO.Api.Controllers;
 [Route("api/[controller]")]
 public class ProjectController(IProjectService projectService) : ControllerBase
 {
+    [HttpGet]
+    [ProducesResponseType(typeof(ProjectModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Get([FromQuery] GetProjectRequest request)
+    {
+        var result = await _projectService.GetByIdAsync(request.Id);
+        if (!result.Success)
+            return NotFound(result.ErrorMessage);
+        return Ok(result.Data);
+    }
     private readonly IProjectService _projectService = projectService;
     [HttpGet("all")]
     [ProducesResponseType(typeof(IEnumerable<ProjectModel>), StatusCodes.Status200OK)]
@@ -21,18 +31,6 @@ public class ProjectController(IProjectService projectService) : ControllerBase
             return NotFound(projects?.ErrorMessage ?? "No projects found.");
         return Ok(projects);
     }
-    [HttpGet]
-    [ProducesResponseType(typeof(ProjectModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get([FromQuery] GetProjectRequest request)
-    {
-        var result = await _projectService.GetByIdAsync(request.Id);
-        if (!result.Success)
-            return NotFound(result.ErrorMessage);
-        return Ok(result.Data);
-    }
-
-
     [HttpPost]
     [ProducesResponseType(typeof(CreateProjectRequest), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,7 +57,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
 
         if (!result.Success)
             return NotFound(result.ErrorMessage);
-        
+
         return NoContent();
     }
     [HttpPut]

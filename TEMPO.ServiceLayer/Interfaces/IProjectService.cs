@@ -10,5 +10,5 @@ public interface IProjectService
   Task<ServiceResult<ProjectModel>> GetByIdAsync(Guid id);
   Task<ServiceResult<ProjectModel>> CreateAsync(CreateProjectCommand command);
   Task<ServiceResult> DeleteAsync(Guid id);
-  Task<ServiceResult<string>> UpdateAsync(UpdateProjectCommand command);
+  Task<ServiceResult<ProjectModel>> UpdateAsync(UpdateProjectCommand command);
 }

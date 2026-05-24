@@ -8,8 +8,19 @@ public record CreateTimeEntryRequest
   DateTime Date,
   string? Description
 );
-
 public record GetTimeEntryRequest
 (
-  string Id
+  Guid Id
+);
+public record UpdateTimeEntryRequest
+(
+  Guid ProjectId,
+  string EmployeeId,
+  double HoursWorked,
+  DateTime Date,
+  string? Description
+);
+public record DeleteTimeEntryRequest
+(
+  Guid Id
 );

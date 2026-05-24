@@ -105,7 +105,6 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     if (!string.IsNullOrWhiteSpace(command.PhoneNumber) && command.PhoneNumber != user.PhoneNumber)
       actions.Add(async () => await _userManager.SetPhoneNumberAsync(user, command.PhoneNumber));
 
-    // Run actions and return first failure
     foreach (var act in actions)
     {
       var res = await act();

@@ -34,10 +34,9 @@ public class ProjectRepository(ApplicationDbContext dbContext) : IProjectReposit
     _projects.Remove(project);
     await _dbContext.SaveChangesAsync();
   }
-  public async Task<string> UpdateAsync(Project project)
+  public async Task<bool> UpdateAsync(Project project)
   {
     _projects.Update(project);
-    await _dbContext.SaveChangesAsync();
-    return $"Project '{project.Name}' updated successfully.";
+    return await _dbContext.SaveChangesAsync() > 0;
   }
 }

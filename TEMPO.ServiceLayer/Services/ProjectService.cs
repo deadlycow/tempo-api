@@ -10,6 +10,7 @@ namespace TEMPO.ServiceLayer.Services;
 public class ProjectService(ProjectRepository projectRepository) : IProjectService
 {
   private readonly ProjectRepository _projectRepository = projectRepository;
+
   public async Task<ServiceResult<IEnumerable<ProjectModel>>> GetAllAsync()
   {
     var projects = await _projectRepository.GetAllAsync();
@@ -22,7 +23,7 @@ public class ProjectService(ProjectRepository projectRepository) : IProjectServi
 
     var project = await _projectRepository.GetByIdAsync(id);
     if (project == null)
-      return ServiceResult<ProjectModel>.Failure($"Project with ID {id} not found.");
+      return ServiceResult<ProjectModel>.Failure("Project not found.");
 
     return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(project));
   }
@@ -36,13 +37,21 @@ public class ProjectService(ProjectRepository projectRepository) : IProjectServi
   {
     var project = await _projectRepository.GetByIdAsync(id);
     if (project == null)
-      return ServiceResult.Failure($"Project with ID {id} not found.");
+      return ServiceResult.Failure("Project not found.");
 
     await _projectRepository.DeleteAsync(id);
     return ServiceResult.SuccessResult();
   }
-  public async Task<ServiceResult<string>> UpdateAsync(UpdateProjectCommand command)
+  public async Task<ServiceResult<ProjectModel>> UpdateAsync(UpdateProjectCommand command)
   {
-    return ServiceResult<string>.SuccessResult($"Project '{command.Name}' updated successfully.");
+    var existingProject = await _projectRepository.GetByIdAsync(command.Id);
+    if (existingProject == null)
+      return ServiceResult<ProjectModel>.Failure("Project not found.");
+
+    ProjectFactory.UpdateEntity(existingProject, command);
+    if (!await _projectRepository.UpdateAsync(existingProject))
+      return ServiceResult<ProjectModel>.Failure("Failed to update project.");
+
+    return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(existingProject));
   }
 }
