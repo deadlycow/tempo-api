@@ -1,21 +1,21 @@
-using System.ComponentModel.DataAnnotations;
 using TEMPO.ServiceLayer.Common.Enum;
 
 namespace TEMPO.ServiceLayer.Command;
 
-public class CreateUserCommand
+public record UserCommand
 {
-  public required string UserName { get; set; }
-  public required string Email { get; set; }
-  public required string Password { get; set; }
-  public string? PhoneNumber { get; set; }
-  public UserRole Role { get; set; } = UserRole.User;
+  public string? UserName { get; init; }
+  public string? PhoneNumber { get; init; }
 }
-public class UpdateUserCommand
+public record CreateUserCommand : UserCommand
 {
-  [Required]
-  public required string Id { get; set; }
-  public string? UserName { get; set; }
-  public string? Email { get; set; }
-  public string? PhoneNumber { get; set; }
+  public required string Password { get; init; }
+  public required string Email { get; init; }
+  public UserRole Role { get; init; } = UserRole.User;
+}
+public record UpdateUserCommand : UserCommand
+{
+  public required string Id { get; init; }
+  public string? Email { get; init; }
+  public UserRole? Role { get; init; }
 }

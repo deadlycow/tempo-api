@@ -14,7 +14,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
 {
   private readonly UserManager<AppUser> _userManager = userManager;
 
-  public async Task<ServiceResult<UserModel>> Get(string email)
+  public async Task<ServiceResult<UserModel>> GetByEmailAsync(string email)
   {
     if (string.IsNullOrWhiteSpace(email))
       throw new ArgumentException("Email cannot be null or empty.", nameof(email));
@@ -27,7 +27,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
 
     return ServiceResult<UserModel>.SuccessResult(UserFactory.ToModel(user));
   }
-  public async Task<ServiceResult<IEnumerable<UserModel>>> GetAll()
+  public async Task<ServiceResult<IEnumerable<UserModel>>> GetAllAsync()
   {
     var users = await _userManager.Users.ToListAsync();
 
@@ -38,7 +38,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     return ServiceResult<IEnumerable<UserModel>>.SuccessResult(userModels);
   }
 
-  public async Task<IdentityResult> Create(CreateUserCommand command)
+  public async Task<IdentityResult> CreateAsync(CreateUserCommand command)
   {
     ArgumentNullException.ThrowIfNull(command);
 
@@ -61,7 +61,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     return result;
   }
 
-  public async Task<IdentityResult> Delete(string id)
+  public async Task<IdentityResult> DeleteAsync(string id)
   {
     if (string.IsNullOrWhiteSpace(id))
       throw new ArgumentException("ID cannot be null or empty.", nameof(id));
@@ -79,7 +79,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     return await _userManager.DeleteAsync(user);
   }
 
-  public async Task<IdentityResult> Update(UpdateUserCommand command)
+  public async Task<IdentityResult> UpdateAsync(UpdateUserCommand command)
   {
     ArgumentNullException.ThrowIfNull(command);
     if (string.IsNullOrWhiteSpace(command.Id))

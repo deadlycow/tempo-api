@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Api.Dtos;
 using TEMPO.ServiceLayer.Services;
+using TEMPO.ServiceLayer.Command;
+using TEMPO.Domain.Models;
 
 namespace TEMPO.Api.Controllers;
 
@@ -13,54 +15,70 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Get()
+    public async Task<IActionResult> Get([FromQuery] GetTimeEntryRequest id)
     {
-        return Ok(new { Message = "Hello from TimeEntryController!" });
+        var result = await _timeEntryService.GetByIdAsync(id.Id);
+        if (!result.Success)
+            return NotFound(result.ErrorMessage);
+        return Ok(result.Data);
     }
-    [HttpGet("all")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("allByUserId")]
+    [ProducesResponseType(typeof(IEnumerable<TimeEntryModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] Guid userId)
     {
-        return Ok(new { Message = "Hello from TimeEntryController!" });
+        var timeEntries = await _timeEntryService.GetAllByUserIdAsync(userId);
+        if (timeEntries == null || !timeEntries.Success)
+            return NotFound(timeEntries?.ErrorMessage ?? "No time entries found for the user.");
+        return Ok(timeEntries);
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(CreateTimeEntryRequest), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post(CreateTimeEntryRequest request)
     {
-        var result = await _timeEntryService.CreateTimeEntryAsync(new CreateTimeEntryCommand
+        var result = await _timeEntryService.CreateAsync(new CreateTimeEntryCommand
         {
+            ProjectId = request.ProjectId,
             EmployeeId = request.EmployeeId,
-            Date = request.Date,
             HoursWorked = request.HoursWorked,
-            Description = request.Description,
-            ProjectId = request.ProjectId
+            Date = request.Date,
+            Description = request.Description
         });
-        return CreatedAtAction(nameof(Get), new { id = 1 }, new { Message = "Value created successfully!" });
+        if (!result.Success)
+            return BadRequest(result.ErrorMessage);
+            
+        return CreatedAtAction(nameof(Get), new { id = result.Data?.Id }, result.Data);
     }
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromQuery] DeleteTimeEntryRequest id)
     {
-        return Ok(new { Message = $"Value deleted successfully for ID: {id}" });
+        var result = await _timeEntryService.DeleteAsync(id.Id);
+
+        if (!result.Success)
+            return NotFound(result.ErrorMessage);
+
+        return NoContent();
     }
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Put([FromBody] UpdateTimeEntryRequest request)
+    public async Task<IActionResult> Update([FromBody] UpdateTimeEntryRequest request)
     {
-        // var result = await _timeEntryService.UpdateTimeEntryAsync(new UpdateTimeEntryCommand
-        // {
-        //     Id = id,
-        //     EmployeeId = request.EmployeeId,
-        //     Date = request.Date,
-        //     HoursWorked = request.HoursWorked,
-        //     Description = request.Description,
-        //     ProjectId = request.ProjectId
-        // });
-        return Ok(new { Message = "Value updated successfully!" });
+        var result = await _timeEntryService.UpdateAsync(new UpdateTimeEntryCommand
+        {
+            Id = request.Id,
+            ProjectId = request.ProjectId,
+            EmployeeId = request.EmployeeId,
+            Date = request.Date,
+            HoursWorked = request.HoursWorked,
+            Description = request.Description,
+        });
+        if (!result.Success)
+            return BadRequest(result.ErrorMessage);
+        return Ok(result.Data);
     }
 }

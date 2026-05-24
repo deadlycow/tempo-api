@@ -15,7 +15,7 @@ public class UserController(IUserService userService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserModel>> Get([FromQuery] GetUserRequest request)
     {
-        var user = await userService.Get(request.Email);
+        var user = await userService.GetByEmailAsync(request.Email);
 
         if (!user.Success)
             return NotFound(new { Message = user.ErrorMessage });
@@ -27,7 +27,7 @@ public class UserController(IUserService userService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<UserModel>>> GetAll()
     {
-        var users = await userService.GetAll();
+        var users = await userService.GetAllAsync();
 
         if (!users.Success)
             return NotFound(new { Message = users.ErrorMessage });
@@ -36,19 +36,18 @@ public class UserController(IUserService userService) : ControllerBase
     }
     [HttpPost]
     [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post(CreateUserRequest request)
     {
-        var command = new CreateUserCommand
+        var result = await userService.CreateAsync(new CreateUserCommand
         {
             UserName = request.UserName,
             Email = request.Email,
             Password = request.Password
-        };
+        });
 
-        var result = await userService.Create(command);
         if (!result.Succeeded)
-            return NotFound(result.Errors);
+            return BadRequest(result.Errors);
 
         return CreatedAtAction(nameof(Get), new { Message = $"User created successfully!" });
     }
@@ -57,7 +56,7 @@ public class UserController(IUserService userService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromQuery] DeleteUserRequest request)
     {
-        var result = await userService.Delete(request.Id);
+        var result = await userService.DeleteAsync(request.Id);
         if (!result.Succeeded)
             return NotFound(result.Errors);
 
@@ -68,15 +67,14 @@ public class UserController(IUserService userService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Put([FromQuery] UpdateUserRequest request)
     {
-        var command = new UpdateUserCommand
+        var result = await userService.UpdateAsync(new UpdateUserCommand
         {
             Id = request.Id,
             UserName = request.UserName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber
-        };
+        });
 
-        var result = await userService.Update(command);
         if (!result.Succeeded)
             return NotFound(result.Errors);
 

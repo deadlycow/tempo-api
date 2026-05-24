@@ -1,16 +1,17 @@
 namespace TEMPO.ServiceLayer.Command;
-public class CreateProjectCommand
+
+public record CreateProjectCommand
 {
-  public required string Name { get; set; }
-  public string? Description { get; set; }
-  public DateTime StartDate { get; set; }
-  public DateTime? EndDate { get; set; }
+  public required string Name { get; init; }
+  public required DateTime StartDate { get; init; }
+  public DateTime? EndDate { get; init; }
+  public string? Description { get; init; }
 }
-public class UpdateProjectCommand
+public record UpdateProjectCommand
 {
-  public required Guid Id { get; set; }
-  public required string Name { get; set; }
-  public string? Description { get; set; }
-  public required DateTime StartDate { get; set; }
-  public DateTime? EndDate { get; set; }
+  public required Guid Id { get; init; }
+  public string? Name { get; init; }
+  public DateTime? StartDate { get; init; }
+  public DateTime? EndDate { get; init; }
+  public string? Description { get; init; }
 }

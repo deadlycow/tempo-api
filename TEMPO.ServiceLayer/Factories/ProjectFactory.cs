@@ -23,11 +23,17 @@ public static class ProjectFactory
         EndDate = project.EndDate
     };
     public static IEnumerable<ProjectModel> ToModelList(IEnumerable<Project> projects) => [.. projects.Select(ToModel)];
-    public static void UpdateEntity(Project existingProject, UpdateProjectCommand command)
+    public static void UpdateEntity(Project project, UpdateProjectCommand command)
     {
-        existingProject.Name = command.Name;
-        existingProject.Description = command.Description;
-        existingProject.StartDate = command.StartDate;
-        existingProject.EndDate = command.EndDate;
+        if (command.Name is not null)
+            project.Name = command.Name;
+        if (command.Description is not null)
+            project.Description = command.Description;
+        if (command.Description is not null)
+            project.Description = command.Description;
+        if (command.StartDate.HasValue)
+            project.StartDate = command.StartDate.Value;
+        if (command.EndDate.HasValue)
+            project.EndDate = command.EndDate.Value;
     }
 }

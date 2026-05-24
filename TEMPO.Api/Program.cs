@@ -32,7 +32,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<TimeEntryService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 
-builder.Services.AddScoped<TimeEntryRepository>();
+builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 var app = builder.Build();

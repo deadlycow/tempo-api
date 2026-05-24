@@ -7,9 +7,9 @@ namespace TEMPO.ServiceLayer.Interfaces;
 
 public interface IUserService
 {
-  Task<ServiceResult<UserModel>> Get(string email);
-  Task<ServiceResult<IEnumerable<UserModel>>> GetAll();
-  Task<IdentityResult> Create(CreateUserCommand command);
-  Task<IdentityResult> Delete(string id);
-  Task<IdentityResult> Update(UpdateUserCommand command);
+  Task<ServiceResult<UserModel>> GetByEmailAsync(string email);
+  Task<ServiceResult<IEnumerable<UserModel>>> GetAllAsync();
+  Task<IdentityResult> CreateAsync(CreateUserCommand command);
+  Task<IdentityResult> DeleteAsync(string id);
+  Task<IdentityResult> UpdateAsync(UpdateUserCommand command);
 }

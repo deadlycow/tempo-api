@@ -3,7 +3,7 @@ namespace TEMPO.Api.Dtos;
 public record CreateTimeEntryRequest
 (
   Guid ProjectId,
-  string EmployeeId,
+  Guid EmployeeId,
   double HoursWorked,
   DateTime Date,
   string? Description
@@ -14,8 +14,9 @@ public record GetTimeEntryRequest
 );
 public record UpdateTimeEntryRequest
 (
+  Guid Id,
   Guid ProjectId,
-  string EmployeeId,
+  Guid EmployeeId,
   double HoursWorked,
   DateTime Date,
   string? Description

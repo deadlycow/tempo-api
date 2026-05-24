@@ -10,25 +10,26 @@ public static class TimeEntryFactory
     {
         Id = entity.Id,
         ProjectId = entity.ProjectId,
-        User = UserFactory.ToModel(entity.Employee!),
+        EmployeeId = entity.EmployeeId,
         HoursWorked = entity.HoursWorked,
-        DateTime? startTime = null, // Placeholder for future implementation
-        DateTime? endTime = null, // Placeholder for future implementation
+        Date = entity.Date,
         Description = entity.Description
     };
-    /// <summary>
-    /// Converts a list of TimeEntry entities to a list of TimeEntryModel objects.
-    /// </summary>
-    /// <param name="timeEntries"></param>
-    /// <returns>IEnumerable<TimeEntryModel></returns>
     public static IEnumerable<TimeEntryModel> ToModelList(IEnumerable<TimeEntry> timeEntries) => [.. timeEntries.Select(ToModel)];
     public static TimeEntry ToEntity(CreateTimeEntryCommand command) => new()
     {
-        EmployeeId = command.EmployeeId,
-        Date = command.Date,
+        ProjectId = command.ProjectId,
+        EmployeeId = command.EmployeeId.ToString(),
         HoursWorked = command.HoursWorked,
-        Description = command.Description,
-        ProjectId = command.ProjectId
+        Date = command.Date,
+        Description = command.Description
     };
-
+    public static IEnumerable<TimeEntry> ToEntityList(IEnumerable<CreateTimeEntryCommand> commands) => [.. commands.Select(ToEntity)];
+    public static void UpdateEntity(TimeEntry entity, UpdateTimeEntryCommand command)
+    {
+        entity.ProjectId = command.ProjectId;
+        entity.HoursWorked = command.HoursWorked;
+        entity.Date = command.Date;
+        entity.Description = command.Description;
+    }
 }

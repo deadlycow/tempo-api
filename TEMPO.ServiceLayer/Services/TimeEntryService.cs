@@ -1,36 +1,52 @@
-using TEMPO.DataLayer.Repositories;
+using TEMPO.DataLayer.Interfaces;
 using TEMPO.ServiceLayer.Factories;
 using TEMPO.ServiceLayer.Command;
 using TEMPO.Domain.Models;
+using TEMPO.Domain.Common;
 
 namespace TEMPO.ServiceLayer.Services;
 
-public class TimeEntryService(TimeEntryRepository timeEntryRepository)
+public class TimeEntryService(ITimeEntryRepository timeEntryRepository)
 {
-    private readonly TimeEntryRepository _timeEntryRepository = timeEntryRepository;
+    private readonly ITimeEntryRepository _timeEntryRepository = timeEntryRepository;
 
-    public Task<TimeEntryModel> GetByIdAsync(Guid id)
+    public async Task<ServiceResult<TimeEntryModel>> GetByIdAsync(Guid id)
     {
         throw new NotImplementedException();
     }
-    public Task<IEnumerable<TimeEntryModel>> GetAllAsync()
+    public async Task<ServiceResult<IEnumerable<TimeEntryModel>>> GetAllByUserIdAsync(Guid userId)
     {
-        throw new NotImplementedException();
-    }
-    public async Task<TimeEntryModel> CreateTimeEntryAsync(CreateTimeEntryCommand command)
-    {
-        var timeEntry = TimeEntryFactory.ToEntity(command);
+        var timeEntries = await _timeEntryRepository.GetAllByUserIdAsync(userId);
 
+        return ServiceResult<IEnumerable<TimeEntryModel>>.SuccessResult(TimeEntryFactory.ToModelList(timeEntries));
+    }
+    public async Task<ServiceResult<TimeEntryModel>> CreateAsync(CreateTimeEntryCommand command)
+    {
+        var entity = TimeEntryFactory.ToEntity(command);
 
-        await _timeEntryRepository.CreateAsync(timeEntry);
-        return TimeEntryFactory.ToModel(timeEntry);
+        var created = await _timeEntryRepository.CreateAsync(entity);
+
+        return ServiceResult<TimeEntryModel>.SuccessResult(TimeEntryFactory.ToModel(created));
     }
-    public Task DeleteTimeEntryAsync(Guid id)
+    public async Task<ServiceResult> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var timeEntry = await _timeEntryRepository.GetByIdAsync(id);
+        if (timeEntry == null)
+            return ServiceResult.Failure("Time entry not found.");
+
+        await _timeEntryRepository.DeleteAsync(id);
+        return ServiceResult.SuccessResult();
     }
-    public Task<TimeEntryModel> UpdateTimeEntryAsync(UpdateTimeEntryCommand command)
+    public async Task<ServiceResult<TimeEntryModel>> UpdateAsync(UpdateTimeEntryCommand command)
     {
-        throw new NotImplementedException();
+        var entity = await _timeEntryRepository.GetByIdAsync(command.Id);
+        if (entity == null)
+            return ServiceResult<TimeEntryModel>.Failure("TimeEntry not found.");
+
+        TimeEntryFactory.UpdateEntity(entity, command);
+        if (!await _timeEntryRepository.UpdateAsync(entity))
+            return ServiceResult<TimeEntryModel>.Failure("Failed to update timeEntry.");
+
+        return ServiceResult<TimeEntryModel>.SuccessResult(TimeEntryFactory.ToModel(entity));
     }
 }

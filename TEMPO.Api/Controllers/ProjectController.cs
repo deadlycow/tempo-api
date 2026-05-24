@@ -36,14 +36,13 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateProjectRequest request)
     {
-        var command = new CreateProjectCommand
+        var result = await _projectService.CreateAsync(new CreateProjectCommand
         {
             Name = request.Name,
             Description = request.Description,
             StartDate = request.StartDate,
             EndDate = request.EndDate
-        };
-        var result = await _projectService.CreateAsync(command);
+        });
         if (!result.Success)
             return BadRequest(result.ErrorMessage);
         return CreatedAtAction(nameof(Get), new { id = result.Data?.Id }, result.Data);
@@ -65,15 +64,14 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(UpdateProjectRequest request)
     {
-        var command = new UpdateProjectCommand
+        var result = await _projectService.UpdateAsync(new UpdateProjectCommand
         {
             Id = request.Id,
             Name = request.Name,
             Description = request.Description,
             StartDate = request.StartDate,
             EndDate = request.EndDate
-        };
-        var result = await _projectService.UpdateAsync(command);
+        });
         if (!result.Success)
             return BadRequest(result.ErrorMessage);
         return Ok(result.Data);

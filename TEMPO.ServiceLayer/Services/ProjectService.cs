@@ -1,4 +1,4 @@
-using TEMPO.DataLayer.Repositories;
+using TEMPO.DataLayer.Interfaces;
 using TEMPO.Domain.Common;
 using TEMPO.Domain.Models;
 using TEMPO.ServiceLayer.Command;
@@ -7,9 +7,9 @@ using TEMPO.ServiceLayer.Interfaces;
 
 namespace TEMPO.ServiceLayer.Services;
 
-public class ProjectService(ProjectRepository projectRepository) : IProjectService
+public class ProjectService(IProjectRepository projectRepository) : IProjectService
 {
-  private readonly ProjectRepository _projectRepository = projectRepository;
+  private readonly IProjectRepository _projectRepository = projectRepository;
 
   public async Task<ServiceResult<IEnumerable<ProjectModel>>> GetAllAsync()
   {
@@ -29,9 +29,11 @@ public class ProjectService(ProjectRepository projectRepository) : IProjectServi
   }
   public async Task<ServiceResult<ProjectModel>> CreateAsync(CreateProjectCommand command)
   {
-    var project = ProjectFactory.ToEntity(command);
-    project = await _projectRepository.CreateAsync(project);
-    return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(project));
+    var entity = ProjectFactory.ToEntity(command);
+
+    var created = await _projectRepository.CreateAsync(entity);
+    
+    return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(created));
   }
   public async Task<ServiceResult> DeleteAsync(Guid id)
   {

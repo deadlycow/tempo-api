@@ -1,10 +1,19 @@
 namespace TEMPO.ServiceLayer.Command;
 
-public class CreateTimeEntryCommand
+public record TimeEntryCommand
 {
-    public required Guid EmployeeId { get; set; }
-    public DateTime Date { get; set; }
-    public double? HoursWorked { get; set; }
-    public string? Description { get; set; }
-    public required Guid ProjectId { get; set; }
+    public required Guid EmployeeId { get; init; }
+    public required Guid ProjectId { get; init; }
+    public DateTime Date { get; init; }
+    public double HoursWorked { get; init; }
+    public string? Description { get; init; }
+}
+
+public record CreateTimeEntryCommand : TimeEntryCommand
+{
+}
+
+public record UpdateTimeEntryCommand : TimeEntryCommand
+{
+    public required Guid Id { get; init; }
 }
