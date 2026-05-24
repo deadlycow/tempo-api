@@ -275,7 +275,8 @@ namespace TEMPO.DataLayer.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProjectId", "EmployeeId", "Date")
+                        .IsUnique();
 
                     b.ToTable("TimeEntries");
                 });

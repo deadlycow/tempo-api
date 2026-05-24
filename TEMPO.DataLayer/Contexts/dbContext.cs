@@ -14,15 +14,19 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     base.OnModelCreating(modelBuilder);
 
     modelBuilder.Entity<TimeEntry>()
-     .HasOne(te => te.Employee)
-     .WithMany(u => u.TimeEntries)
-     .HasForeignKey(te => te.EmployeeId)
-     .OnDelete(DeleteBehavior.Cascade);
+    .HasOne(te => te.Employee)
+    .WithMany(u => u.TimeEntries)
+    .HasForeignKey(te => te.EmployeeId)
+    .OnDelete(DeleteBehavior.Cascade);
 
     modelBuilder.Entity<TimeEntry>()
-     .HasOne(te => te.Project)
-     .WithMany(p => p.TimeEntries)
-     .HasForeignKey(te => te.ProjectId)
-     .OnDelete(DeleteBehavior.Cascade);
+    .HasOne(te => te.Project)
+    .WithMany(p => p.TimeEntries)
+    .HasForeignKey(te => te.ProjectId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<TimeEntry>()
+    .HasIndex(te => new { te.ProjectId, te.EmployeeId, te.Date })
+    .IsUnique();
   }
 }
