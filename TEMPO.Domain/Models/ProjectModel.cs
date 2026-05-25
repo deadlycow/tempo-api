@@ -7,5 +7,5 @@ public class ProjectModel
     public string? Description { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public List<TimeEntryModel> TimeEntries { get; set; } = new List<TimeEntryModel>();
+    public IEnumerable<TimeEntryModel> TimeEntries { get; set; } = new List<TimeEntryModel>();
 }

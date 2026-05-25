@@ -9,13 +9,17 @@ public class ProjectRepository(ApplicationDbContext dbContext) : IProjectReposit
 {
   private readonly ApplicationDbContext _dbContext = dbContext;
   private readonly DbSet<Project> _projects = dbContext.Set<Project>();
+  public async Task<Project?> GetByIdAsync(Guid id, bool includeTimeEntries = false)
+  {
+    IQueryable<Project> query = _projects;
+    if (includeTimeEntries)
+      query = query.Include(x => x.TimeEntries);
+
+    return await query.FirstOrDefaultAsync(x => x.Id == id);
+  }
   public async Task<IEnumerable<Project>> GetAllAsync()
   {
     return await _projects.ToListAsync();
-  }
-  public async Task<Project?> GetByIdAsync(Guid id)
-  {
-    return await _projects.FirstOrDefaultAsync(p => p.Id == id);
   }
   public async Task<Project> CreateAsync(Project project)
   {

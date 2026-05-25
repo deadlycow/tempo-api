@@ -10,17 +10,17 @@ namespace TEMPO.Api.Controllers;
 [Route("api/[controller]")]
 public class ProjectController(IProjectService projectService) : ControllerBase
 {
+    private readonly IProjectService _projectService = projectService;
     [HttpGet]
     [ProducesResponseType(typeof(ProjectModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromQuery] GetProjectRequest request)
     {
-        var result = await _projectService.GetByIdAsync(request.Id);
+        var result = await _projectService.GetByIdAsync(request.Id, request.IncludeTimeEntries);
         if (!result.Success)
             return NotFound(result.ErrorMessage);
         return Ok(result.Data);
     }
-    private readonly IProjectService _projectService = projectService;
     [HttpGet("all")]
     [ProducesResponseType(typeof(IEnumerable<ProjectModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

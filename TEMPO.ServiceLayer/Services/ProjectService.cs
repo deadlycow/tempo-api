@@ -11,21 +11,21 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
 {
   private readonly IProjectRepository _projectRepository = projectRepository;
 
-  public async Task<ServiceResult<IEnumerable<ProjectModel>>> GetAllAsync()
-  {
-    var projects = await _projectRepository.GetAllAsync();
-    return ServiceResult<IEnumerable<ProjectModel>>.SuccessResult(ProjectFactory.ToModelList(projects));
-  }
-  public async Task<ServiceResult<ProjectModel>> GetByIdAsync(Guid id)
+  public async Task<ServiceResult<ProjectModel>> GetByIdAsync(Guid id, bool includeTimeEntries = false)
   {
     if (id == Guid.Empty)
       return ServiceResult<ProjectModel>.Failure("Invalid project ID.");
 
-    var project = await _projectRepository.GetByIdAsync(id);
+    var project = await _projectRepository.GetByIdAsync(id, includeTimeEntries);
     if (project == null)
       return ServiceResult<ProjectModel>.Failure("Project not found.");
 
     return ServiceResult<ProjectModel>.SuccessResult(ProjectFactory.ToModel(project));
+  }
+  public async Task<ServiceResult<IEnumerable<ProjectModel>>> GetAllAsync()
+  {
+    var projects = await _projectRepository.GetAllAsync();
+    return ServiceResult<IEnumerable<ProjectModel>>.SuccessResult(ProjectFactory.ToModelList(projects));
   }
   public async Task<ServiceResult<ProjectModel>> CreateAsync(CreateProjectCommand command)
   {

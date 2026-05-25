@@ -20,7 +20,8 @@ public static class ProjectFactory
         Name = project.Name,
         Description = project.Description,
         StartDate = project.StartDate,
-        EndDate = project.EndDate
+        EndDate = project.EndDate,
+        TimeEntries = [.. project.TimeEntries.Select(TimeEntryFactory.ToModel)]
     };
     public static IEnumerable<ProjectModel> ToModelList(IEnumerable<Project> projects) => [.. projects.Select(ToModel)];
     public static void UpdateEntity(Project project, UpdateProjectCommand command)
