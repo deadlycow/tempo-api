@@ -15,9 +15,9 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get([FromQuery] GetTimeEntryRequest id)
+    public async Task<IActionResult> Get([FromQuery] GetTimeEntryRequest request)
     {
-        var result = await _timeEntryService.GetByIdAsync(id.Id);
+        var result = await _timeEntryService.GetByIdAsync(new GetTimeEntryCommand { Id = request.Id });
         if (!result.Success)
             return NotFound(result.ErrorMessage);
         return Ok(result.Data);
@@ -25,9 +25,9 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpGet("allByUserId")]
     [ProducesResponseType(typeof(IEnumerable<TimeEntryModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAll([FromQuery] Guid userId)
+    public async Task<IActionResult> GetAll([FromQuery] GetAllTimeEntryByUserIdRequest request)
     {
-        var timeEntries = await _timeEntryService.GetAllByUserIdAsync(userId);
+        var timeEntries = await _timeEntryService.GetAllByUserIdAsync(new GetTimeEntryCommand { Id = request.Id });
         if (timeEntries == null || !timeEntries.Success)
             return NotFound(timeEntries?.ErrorMessage ?? "No time entries found for the user.");
         return Ok(timeEntries);
@@ -48,7 +48,7 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
         });
         if (!result.Success)
             return BadRequest(result.ErrorMessage);
-            
+
         return CreatedAtAction(nameof(Get), new { id = result.Data?.Id }, result.Data);
     }
     [HttpDelete]

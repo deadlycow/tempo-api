@@ -10,13 +10,19 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository)
 {
     private readonly ITimeEntryRepository _timeEntryRepository = timeEntryRepository;
 
-    public async Task<ServiceResult<TimeEntryModel>> GetByIdAsync(Guid id)
+    public async Task<ServiceResult<TimeEntryModel>> GetByIdAsync(GetTimeEntryCommand command)
     {
-        throw new NotImplementedException();
+        var entity = await _timeEntryRepository.GetByIdAsync(command.Id);
+        if (entity == null)
+            return ServiceResult<TimeEntryModel>.Failure("");
+
+        return ServiceResult<TimeEntryModel>.SuccessResult(TimeEntryFactory.ToModel(entity));
     }
-    public async Task<ServiceResult<IEnumerable<TimeEntryModel>>> GetAllByUserIdAsync(Guid userId)
+    public async Task<ServiceResult<IEnumerable<TimeEntryModel>>> GetAllByUserIdAsync(GetTimeEntryCommand command)
     {
-        var timeEntries = await _timeEntryRepository.GetAllByUserIdAsync(userId);
+        var timeEntries = await _timeEntryRepository.GetAllByUserIdAsync(command.Id);
+        if (timeEntries == null)
+            return ServiceResult<IEnumerable<TimeEntryModel>>.Failure("TimeEntrys not found");
 
         return ServiceResult<IEnumerable<TimeEntryModel>>.SuccessResult(TimeEntryFactory.ToModelList(timeEntries));
     }
@@ -32,7 +38,7 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository)
     {
         var timeEntry = await _timeEntryRepository.GetByIdAsync(id);
         if (timeEntry == null)
-            return ServiceResult.Failure("Time entry not found.");
+            return ServiceResult.Failure("TimeEntry not found.");
 
         await _timeEntryRepository.DeleteAsync(id);
         return ServiceResult.SuccessResult();

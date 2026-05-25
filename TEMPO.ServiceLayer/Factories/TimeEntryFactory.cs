@@ -27,9 +27,13 @@ public static class TimeEntryFactory
     public static IEnumerable<TimeEntry> ToEntityList(IEnumerable<CreateTimeEntryCommand> commands) => [.. commands.Select(ToEntity)];
     public static void UpdateEntity(TimeEntry entity, UpdateTimeEntryCommand command)
     {
-        entity.ProjectId = command.ProjectId;
-        entity.HoursWorked = command.HoursWorked;
-        entity.Date = command.Date;
-        entity.Description = command.Description;
+        if (command.ProjectId.HasValue)
+            entity.ProjectId = command.ProjectId.Value;
+        if (command.HoursWorked.HasValue)
+            entity.HoursWorked = command.HoursWorked.Value;
+        if (command.Date.HasValue)
+            entity.Date = command.Date.Value;
+        if (command.Description is not null)
+            entity.Description = command.Description;
     }
 }

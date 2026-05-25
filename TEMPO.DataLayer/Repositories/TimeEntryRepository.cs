@@ -9,17 +9,17 @@ public class TimeEntryRepository(ApplicationDbContext context) : ITimeEntryRepos
 {
   private readonly ApplicationDbContext _context = context;
   private readonly DbSet<TimeEntry> _timeEntries = context.Set<TimeEntry>();
+  public async Task<TimeEntry> GetByIdAsync(Guid id)
+  {
+    var timeEntry = await _timeEntries
+      .FirstOrDefaultAsync(te => te.Id == id) ?? throw new InvalidOperationException("TimeEntry not found.");
+    return timeEntry;
+  }
   public async Task<IEnumerable<TimeEntry>> GetAllByUserIdAsync(Guid id)
   {
     return await _timeEntries
       .Where(te => te.EmployeeId == id.ToString())
       .ToListAsync();
-  }
-  public async Task<TimeEntry> GetByIdAsync(Guid id)
-  {
-    var timeEntry = await _timeEntries
-      .FirstOrDefaultAsync(te => te.Id == id) ?? throw new InvalidOperationException("Time entry not found.");
-    return timeEntry;
   }
   public async Task<TimeEntry> CreateAsync(TimeEntry timeEntry)
   {

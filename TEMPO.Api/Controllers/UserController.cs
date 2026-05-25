@@ -65,7 +65,7 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put([FromQuery] UpdateUserRequest request)
+    public async Task<IActionResult> Update([FromQuery] UpdateUserRequest request)
     {
         var result = await userService.UpdateAsync(new UpdateUserCommand
         {
