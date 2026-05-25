@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Api.Dtos;
-using TEMPO.ServiceLayer.Services;
-using TEMPO.ServiceLayer.Command;
-using TEMPO.Domain.Models;
+using TEMPO.Service.Services;
+using TEMPO.Service.Command;
+using TEMPO.Contracts.Dtos;
 
 namespace TEMPO.Api.Controllers;
 
@@ -23,7 +22,7 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
         return Ok(result.Data);
     }
     [HttpGet("allByUserId")]
-    [ProducesResponseType(typeof(IEnumerable<TimeEntryModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<TimeEntryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAll([FromQuery] GetAllTimeEntryByUserIdRequest request)
     {

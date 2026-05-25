@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-using TEMPO.ServiceLayer.Identity.Seed;
-using TEMPO.ServiceLayer.Interfaces;
-using TEMPO.ServiceLayer.Services;
+using TEMPO.Service.Identity.Seed;
+using TEMPO.Service.Interfaces;
+using TEMPO.Service.Services;
 
-using TEMPO.DataLayer.Contexts;
-using TEMPO.DataLayer.Entities;
-using TEMPO.DataLayer.Repositories;
-using TEMPO.DataLayer.Interfaces;
+using TEMPO.Data.Contexts;
+using TEMPO.Data.Entities;
+using TEMPO.Data.Repositories;
+using TEMPO.Data.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +29,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<TimeEntryService>();
+builder.Services.AddScoped<ITimeEntryService, TimeEntryService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 
 builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();

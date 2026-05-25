@@ -5,7 +5,8 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="TEMPO.Api/TEMPO.Api.csproj" />
-  <Project Path="TEMPO.DataLayer/TEMPO.DataLayer.csproj" />
+  <Project Path="TEMPO.Contracts/TEMPO.Contracts.csproj" />
+  <Project Path="TEMPO.Data/TEMPO.Data.csproj" />
   <Project Path="TEMPO.Domain/TEMPO.Domain.csproj" />
-  <Project Path="TEMPO.ServiceLayer/TEMPO.ServiceLayer.csproj" />
+  <Project Path="TEMPO.Service/TEMPO.Service.csproj" />
 </Solution>

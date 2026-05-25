@@ -11,8 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TEMPO.ServiceLayer\TEMPO.ServiceLayer.csproj" />
-    <ProjectReference Include="..\TEMPO.DataLayer\TEMPO.DataLayer.csproj" />
+    <ProjectReference Include="..\TEMPO.Contracts\TEMPO.Contracts.csproj" />
+    <ProjectReference Include="..\TEMPO.Data\TEMPO.Data.csproj" />
+    <ProjectReference Include="..\TEMPO.Service\TEMPO.Service.csproj" />
   </ItemGroup>
 
 </Project>

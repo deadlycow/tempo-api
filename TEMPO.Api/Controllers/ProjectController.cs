@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Api.Dtos;
-using TEMPO.Domain.Models;
-using TEMPO.ServiceLayer.Command;
-using TEMPO.ServiceLayer.Interfaces;
+using TEMPO.Contracts.Dtos;
+using TEMPO.Service.Command;
+using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers;
 
@@ -12,7 +11,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
 {
     private readonly IProjectService _projectService = projectService;
     [HttpGet]
-    [ProducesResponseType(typeof(ProjectModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromQuery] GetProjectRequest request)
     {
@@ -22,7 +21,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         return Ok(result.Data);
     }
     [HttpGet("all")]
-    [ProducesResponseType(typeof(IEnumerable<ProjectModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<ProjectResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAll()
     {

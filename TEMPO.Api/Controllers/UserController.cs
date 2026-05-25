@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Api.Dtos;
-using TEMPO.Domain.Models;
-using TEMPO.ServiceLayer.Command;
-using TEMPO.ServiceLayer.Interfaces;
+using TEMPO.Contracts.Dtos;
+using TEMPO.Service.Command;
+using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers;
 
@@ -11,9 +10,9 @@ namespace TEMPO.Api.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(UserModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserModel>> Get([FromQuery] GetUserRequest request)
+    public async Task<ActionResult<UserResponse>> Get([FromQuery] GetUserRequest request)
     {
         var user = await userService.GetByEmailAsync(request.Email);
 
@@ -23,9 +22,9 @@ public class UserController(IUserService userService) : ControllerBase
         return Ok(user.Data);
     }
     [HttpGet("all")]
-    [ProducesResponseType(typeof(List<UserModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<UserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<UserModel>>> GetAll()
+    public async Task<ActionResult<List<UserResponse>>> GetAll()
     {
         var users = await userService.GetAllAsync();
 
