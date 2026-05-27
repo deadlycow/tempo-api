@@ -9,7 +9,6 @@ public interface IUserService
 {
   Task<ServiceResult<UserResponse>> GetByEmailAsync(string email);
   Task<ServiceResult<IEnumerable<UserResponse>>> GetAllAsync();
-  Task<IdentityResult> CreateAsync(CreateUserCommand command);
   Task<IdentityResult> DeleteAsync(string id);
   Task<IdentityResult> UpdateAsync(UpdateUserCommand command);
 }

@@ -38,29 +38,6 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     return ServiceResult<IEnumerable<UserResponse>>.SuccessResult(userModels);
   }
 
-  public async Task<IdentityResult> CreateAsync(CreateUserCommand command)
-  {
-    ArgumentNullException.ThrowIfNull(command);
-
-    var existingUser = await _userManager.FindByEmailAsync(command.Email);
-    if (existingUser != null)
-      return IdentityResult.Failed(new IdentityError
-      {
-        Code = "409",
-        Description = "Email already exists."
-      });
-
-    var user = UserFactory.ToEntity(command);
-
-    var result = await _userManager.CreateAsync(user, command.Password ?? "DefaultPassword123!");
-    if (!result.Succeeded)
-      return result;
-
-    await _userManager.AddToRoleAsync(user, command.Role.ToString());
-
-    return result;
-  }
-
   public async Task<IdentityResult> DeleteAsync(string id)
   {
     if (string.IsNullOrWhiteSpace(id))
