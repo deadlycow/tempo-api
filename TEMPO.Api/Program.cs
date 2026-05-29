@@ -59,6 +59,16 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
+builder.Services.AddCors(options =>
+
+options.AddPolicy("Frontend", builder =>
+{
+    builder.WithOrigins("http://localhost:8080")
+    .AllowAnyHeader()
+    .AllowAnyMethod();
+    //.AllowCredentials(); for cookies
+}));
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -74,6 +84,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

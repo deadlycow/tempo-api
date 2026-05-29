@@ -40,7 +40,7 @@ public class AuthService(UserManager<AppUser> userManager, ITokenService TokenSe
   }
   public async Task<IdentityResult> CreateAsync(CreateUserCommand command)
   {
-    ArgumentNullException.ThrowIfNull(command);
+    // ArgumentNullException.ThrowIfNull(command);
 
     var existingUser = await _userManager.FindByEmailAsync(command.Email);
     if (existingUser != null)

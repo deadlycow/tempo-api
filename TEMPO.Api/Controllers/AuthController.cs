@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
 using TEMPO.Service.Command;
+using TEMPO.Service.Common.Enum;
 using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers
@@ -32,7 +33,8 @@ namespace TEMPO.Api.Controllers
             {
                 UserName = request.UserName,
                 Email = request.Email,
-                Password = request.Password
+                Password = request.Password,
+                Role = Enum.Parse<UserRole>(request.Role!)
             });
 
             if (!result.Succeeded)

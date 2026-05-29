@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace TEMPO.Contracts.Dtos;
@@ -19,4 +18,5 @@ public record CreateUserRequest
   [StringLength(100, MinimumLength = 6)]
   public required string Password { get; init; }
   public string? PhoneNumber { get; init; }
+  public string? Role { get; init; }
 }
