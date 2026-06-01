@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
+using TEMPO.Domain.Common.Enum;
 namespace TEMPO.Contracts.Dtos;
 
 public record LoginRequest

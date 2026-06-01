@@ -22,7 +22,7 @@ namespace TEMPO.Api.Controllers
             if (!result.Success)
                 return Unauthorized(result.ErrorMessage);
                 
-            return Ok("Signed in");
+            return Ok(result.Data);
         }
         [HttpPost("register")]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
