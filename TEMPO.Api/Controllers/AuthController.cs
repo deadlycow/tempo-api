@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
+using TEMPO.Domain.Common.Enum;
 using TEMPO.Service.Command;
-using TEMPO.Service.Common.Enum;
 using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers
