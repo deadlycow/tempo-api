@@ -18,11 +18,20 @@ namespace TEMPO.Api.Controllers
         public async Task<IActionResult> Post([FromBody] LoginRequest request)
         {
             var result = await _authService.LoginAsync(request);
-            
+
             if (!result.Success)
                 return Unauthorized(result.ErrorMessage);
-                
-            return Ok(result.Data);
+
+            Response.Cookies.Append("accessToken", result.Data!.AccessToken,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = result.Data.ExpiresAt
+            });
+
+            return Ok(new { success = true });
         }
         [HttpPost("register")]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]

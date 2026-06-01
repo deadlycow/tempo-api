@@ -14,6 +14,18 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
 {
   private readonly UserManager<AppUser> _userManager = userManager;
 
+  public async Task<ServiceResult<UserResponse>> GetByIdAsync(string id)
+  {
+    if (string.IsNullOrWhiteSpace(id))
+      throw new ArgumentException("ID cannot be null or empty.", nameof(id));
+
+    var user = await _userManager.FindByIdAsync(id);
+    if (user == null)
+      return ServiceResult<UserResponse>.Failure("User not found.");
+      
+    return ServiceResult<UserResponse>.SuccessResult(UserFactory.ToResponse(user));
+  }
+
   public async Task<ServiceResult<UserResponse>> GetByEmailAsync(string email)
   {
     if (string.IsNullOrWhiteSpace(email))

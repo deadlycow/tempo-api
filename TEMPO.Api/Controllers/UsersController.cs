@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
 using TEMPO.Service.Command;
@@ -9,12 +10,27 @@ namespace TEMPO.Api.Controllers;
 [Route("api/[controller]")]
 public class UsersController(IUserService userService) : ControllerBase
 {
+    private readonly IUserService _userService = userService;
+
+    [HttpGet("me")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserResponse>> GetMe()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+            return Unauthorized();
+            
+        var user = await _userService.GetByIdAsync(userId);
+
+        return Ok(user.Data);
+    }
     [HttpGet]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserResponse>> Get([FromQuery] GetUserRequest request)
     {
-        var user = await userService.GetByEmailAsync(request.Email);
+        var user = await _userService.GetByEmailAsync(request.Email);
 
         if (!user.Success)
             return NotFound(new { Message = user.ErrorMessage });
@@ -26,20 +42,20 @@ public class UsersController(IUserService userService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<UserResponse>>> GetAll()
     {
-        var users = await userService.GetAllAsync();
+        var users = await _userService.GetAllAsync();
 
         if (!users.Success)
             return NotFound(new { Message = users.ErrorMessage });
 
         return Ok(users.Data);
     }
-    
+
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromQuery] DeleteUserRequest request)
     {
-        var result = await userService.DeleteAsync(request.Id);
+        var result = await _userService.DeleteAsync(request.Id);
         if (!result.Succeeded)
             return NotFound(result.Errors);
 
@@ -50,7 +66,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update([FromQuery] UpdateUserRequest request)
     {
-        var result = await userService.UpdateAsync(new UpdateUserCommand
+        var result = await _userService.UpdateAsync(new UpdateUserCommand
         {
             Id = request.Id,
             UserName = request.UserName,

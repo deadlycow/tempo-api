@@ -7,6 +7,7 @@ namespace TEMPO.Service.Interfaces;
 
 public interface IUserService
 {
+  Task<ServiceResult<UserResponse>> GetByIdAsync(string id);
   Task<ServiceResult<UserResponse>> GetByEmailAsync(string email);
   Task<ServiceResult<IEnumerable<UserResponse>>> GetAllAsync();
   Task<IdentityResult> DeleteAsync(string id);
