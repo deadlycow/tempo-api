@@ -8,10 +8,10 @@ using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Service.Services;
 
-public class AuthService(UserManager<AppUser> userManager, JwtTokenService jwtTokenService) : IAuthService
+public class AuthService(UserManager<AppUser> userManager, ITokenService TokenService) : IAuthService
 {
   private readonly UserManager<AppUser> _userManager = userManager;
-  private readonly JwtTokenService _tokenService = jwtTokenService;
+  private readonly ITokenService _tokenService = TokenService;
 
   public async Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request)
   {
@@ -26,7 +26,7 @@ public class AuthService(UserManager<AppUser> userManager, JwtTokenService jwtTo
 
     var roles = await _userManager.GetRolesAsync(user);
 
-    var token = await _tokenService.CreateToken(user, roles);
+    var token = _tokenService.CreateToken(user, roles);
 
     return ServiceResult<AuthResponse>.SuccessResult(new AuthResponse
     {
@@ -39,7 +39,7 @@ public class AuthService(UserManager<AppUser> userManager, JwtTokenService jwtTo
   }
   public async Task<IdentityResult> CreateAsync(CreateUserCommand command)
   {
-    ArgumentNullException.ThrowIfNull(command);
+    // ArgumentNullException.ThrowIfNull(command);
 
     var existingUser = await _userManager.FindByEmailAsync(command.Email);
     if (existingUser != null)

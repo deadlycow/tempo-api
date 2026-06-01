@@ -18,5 +18,5 @@ public record CreateUserRequest
   [StringLength(100, MinimumLength = 6)]
   public required string Password { get; init; }
   public string? PhoneNumber { get; init; }
-  public UserRole Role { get; init; } = UserRole.User;
+  public string? Role { get; init; }
 }

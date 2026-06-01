@@ -11,7 +11,7 @@ namespace TEMPO.Service.Services;
 public class JwtTokenService(IConfiguration configuration) : ITokenService
 {
   private readonly IConfiguration _configuration = configuration;
-  public async Task<string> CreateToken(AppUser user, IList<string> roles)
+  public string CreateToken(AppUser user, IList<string> roles)
   {
     var claims = new List<Claim>
     {
