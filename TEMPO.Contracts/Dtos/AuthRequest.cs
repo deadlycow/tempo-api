@@ -1,6 +1,5 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-
+using TEMPO.Domain.Common.Enum;
 namespace TEMPO.Contracts.Dtos;
 
 public record LoginRequest
@@ -19,4 +18,5 @@ public record CreateUserRequest
   [StringLength(100, MinimumLength = 6)]
   public required string Password { get; init; }
   public string? PhoneNumber { get; init; }
+  public UserRole Role { get; init; } = UserRole.User;
 }

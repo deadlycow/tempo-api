@@ -34,7 +34,6 @@ public class AuthService(UserManager<AppUser> userManager, JwtTokenService jwtTo
       Email = user.Email!,
       UserId = user.Id,
       UserName = user.UserName,
-      Role = roles.FirstOrDefault() ?? "Employee",
       ExpiresAt = DateTime.UtcNow.AddHours(2)
     });
   }

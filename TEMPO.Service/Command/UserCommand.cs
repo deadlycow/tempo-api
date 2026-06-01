@@ -1,4 +1,4 @@
-using TEMPO.Service.Common.Enum;
+using TEMPO.Domain.Common.Enum;
 
 namespace TEMPO.Service.Command;
 
@@ -11,7 +11,7 @@ public record CreateUserCommand : UserCommand
 {
   public required string Password { get; init; }
   public required string Email { get; init; }
-  public UserRole Role { get; init; } = UserRole.User;
+  public required UserRole Role { get; init; }
 }
 public record UpdateUserCommand : UserCommand
 {
