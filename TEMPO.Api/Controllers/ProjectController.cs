@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
 using TEMPO.Service.Command;
 using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ProjectController(IProjectService projectService) : ControllerBase

@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using TEMPO.Service.Services;
 using TEMPO.Service.Command;
 using TEMPO.Contracts.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TEMPO.Api.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TimeEntryController(TimeEntryService timeEntryService) : ControllerBase
