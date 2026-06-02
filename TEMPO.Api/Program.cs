@@ -11,6 +11,7 @@ using TEMPO.Data.Repositories;
 using TEMPO.Data.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,11 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.Re
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoles<IdentityRole>();
 
-builder.Services.AddAuthentication("Bearer")
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
 .AddJwtBearer("Bearer", options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -40,6 +45,18 @@ builder.Services.AddAuthentication("Bearer")
             )
         )
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (context.Request.Cookies.TryGetValue("accessToken", out var token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        },
+    };
+
 });
 
 builder.Services.AddControllers()

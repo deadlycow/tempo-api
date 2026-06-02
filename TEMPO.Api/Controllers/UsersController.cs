@@ -1,17 +1,17 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
 using TEMPO.Service.Command;
 using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
-
     [HttpGet("me")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -19,8 +19,8 @@ public class UsersController(IUserService userService) : ControllerBase
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized();
-            
+            return Unauthorized(new { userId });
+
         var user = await _userService.GetByIdAsync(userId);
 
         return Ok(user.Data);
