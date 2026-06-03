@@ -34,7 +34,7 @@ public class AuthService(UserManager<AppUser> userManager, ITokenService TokenSe
       Email = user.Email!,
       UserId = user.Id,
       UserName = user.UserName,
-      ExpiresAt = DateTime.UtcNow.AddHours(2)
+      ExpiresAt = DateTime.UtcNow.AddHours(2),
     });
   }
   public async Task<IdentityResult> CreateAsync(CreateUserCommand command)

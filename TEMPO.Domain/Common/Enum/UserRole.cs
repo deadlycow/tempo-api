@@ -2,7 +2,7 @@ namespace TEMPO.Domain.Common.Enum;
 
 public enum UserRole
 {
-  Admin,
-  Manager,
-  User
+  admin,
+  team_Leader,
+  employee
 }

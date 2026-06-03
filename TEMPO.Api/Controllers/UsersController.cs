@@ -6,6 +6,7 @@ using TEMPO.Service.Command;
 using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -15,15 +16,15 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpGet("me")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserResponse>> GetMe()
+    public ActionResult<UserResponse> GetMe()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-            return Unauthorized(new { userId });
-
-        var user = await _userService.GetByIdAsync(userId);
-
-        return Ok(user.Data);
+        return Ok(new UserResponse
+        {
+            UserName = User.FindFirst(ClaimTypes.Name)?.Value,
+            Email = User.FindFirst(ClaimTypes.Email)?.Value,
+            Role = User.FindFirst(ClaimTypes.Role)?.Value
+        }
+       );
     }
     [HttpGet]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]

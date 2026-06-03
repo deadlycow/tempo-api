@@ -40,7 +40,7 @@ namespace TEMPO.Api.Controllers
         {
             var result = await _authService.CreateAsync(new CreateUserCommand
             {
-                UserName = request.UserName,
+                UserName = request.Name,
                 Email = request.Email,
                 Password = request.Password,
                 Role = Enum.Parse<UserRole>(request.Role!)

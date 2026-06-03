@@ -17,6 +17,7 @@ public class JwtTokenService(IConfiguration configuration) : ITokenService
     {
       new (ClaimTypes.NameIdentifier, user.Id),
       new (ClaimTypes.Email, user.Email!),
+      new (ClaimTypes.Name, user.UserName ?? "No name")
     };
 
     claims.AddRange(

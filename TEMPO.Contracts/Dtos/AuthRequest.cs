@@ -12,7 +12,7 @@ public record LoginRequest
 public record CreateUserRequest
 {
   [StringLength(25, MinimumLength = 3)]
-  public required string UserName { get; init; }
+  public required string Name { get; init; }
   [EmailAddress]
   public required string Email { get; init; }
   [StringLength(100, MinimumLength = 6)]

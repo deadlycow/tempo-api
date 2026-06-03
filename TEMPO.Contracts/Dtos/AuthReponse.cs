@@ -7,4 +7,5 @@ public class AuthResponse
   public string UserId { get; init; } = null!;
   public string? UserName { get; init; }
   public DateTime ExpiresAt { get; init; }
+  public string? Role { get; init; }
 }

@@ -22,7 +22,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     var user = await _userManager.FindByIdAsync(id);
     if (user == null)
       return ServiceResult<UserResponse>.Failure("User not found.");
-      
+    
     return ServiceResult<UserResponse>.SuccessResult(UserFactory.ToResponse(user));
   }
 
