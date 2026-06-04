@@ -43,13 +43,13 @@ namespace TEMPO.Api.Controllers
                 UserName = request.Name,
                 Email = request.Email,
                 Password = request.Password,
-                Role = Enum.Parse<UserRole>(request.Role!)
+                Role = Enum.Parse<UserRole>(request.Role)
             });
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return CreatedAtAction(nameof(UsersController.Get), new { Message = $"User created successfully!" });
+            return Created();
         }
         [HttpPost("logout")]
         public IActionResult Logout()
