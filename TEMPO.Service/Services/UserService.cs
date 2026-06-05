@@ -22,7 +22,7 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     var user = await _userManager.FindByIdAsync(id);
     if (user == null)
       return ServiceResult<UserResponse>.Failure("User not found.");
-    
+
     return ServiceResult<UserResponse>.SuccessResult(UserFactory.ToResponse(user));
   }
 
@@ -46,8 +46,22 @@ public class UserService(UserManager<AppUser> userManager) : IUserService
     if (users == null || users.Count == 0)
       return ServiceResult<IEnumerable<UserResponse>>.Failure("No users found.");
 
-    var userModels = UserFactory.ToResponseList(users);
-    return ServiceResult<IEnumerable<UserResponse>>.SuccessResult(userModels);
+    var response = new List<UserResponse>();
+
+    foreach (var user in users)
+    {
+      var roles = await _userManager.GetRolesAsync(user);
+
+      response.Add(new UserResponse
+      {
+        Email = user.Email,
+        Name = user.UserName,
+        PhoneNumber = user.PhoneNumber,
+        Role = roles.FirstOrDefault()
+      });
+    }
+
+    return ServiceResult<IEnumerable<UserResponse>>.SuccessResult(response);
   }
 
   public async Task<IdentityResult> DeleteAsync(string id)

@@ -20,7 +20,7 @@ public class UsersController(IUserService userService) : ControllerBase
     {
         return Ok(new UserResponse
         {
-            UserName = User.FindFirst(ClaimTypes.Name)?.Value,
+            Name = User.FindFirst(ClaimTypes.Name)?.Value,
             Email = User.FindFirst(ClaimTypes.Email)?.Value,
             Role = User.FindFirst(ClaimTypes.Role)?.Value
         }
