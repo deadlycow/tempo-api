@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
 using TEMPO.Domain.Common.Enum;
@@ -54,7 +55,8 @@ namespace TEMPO.Api.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            return Ok("logout");
+            Response.Cookies.Delete("accessToken");
+            return Ok();
         }
         [HttpPost("refreshtoken")]
         public IActionResult RefreshToken()
