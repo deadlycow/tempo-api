@@ -23,7 +23,7 @@ public class UserFactory
 
     return new()
     {
-      UserName = entity.UserName,
+      Name = entity.UserName,
       Email = entity.Email,
       PhoneNumber = entity.PhoneNumber
     };

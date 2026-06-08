@@ -15,7 +15,7 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get([FromQuery] GetTimeEntryRequest request)
+    public async Task<ActionResult> Get([FromQuery] GetTimeEntryRequest request)
     {
         var result = await _timeEntryService.GetByIdAsync(new GetTimeEntryCommand { Id = request.Id });
         if (!result.Success)
@@ -25,7 +25,7 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpGet("allByUserId")]
     [ProducesResponseType(typeof(IEnumerable<TimeEntryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAll([FromQuery] GetAllTimeEntryByUserIdRequest request)
+    public async Task<ActionResult> GetAll([FromQuery] GetAllTimeEntryByUserIdRequest request)
     {
         var timeEntries = await _timeEntryService.GetAllByUserIdAsync(new GetTimeEntryCommand { Id = request.Id });
         if (timeEntries == null || !timeEntries.Success)
@@ -36,7 +36,7 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpPost]
     [ProducesResponseType(typeof(CreateTimeEntryRequest), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post(CreateTimeEntryRequest request)
+    public async Task<ActionResult> Post(CreateTimeEntryRequest request)
     {
         var result = await _timeEntryService.CreateAsync(new CreateTimeEntryCommand
         {
@@ -54,7 +54,7 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromQuery] DeleteTimeEntryRequest id)
+    public async Task<ActionResult> Delete([FromQuery] DeleteTimeEntryRequest id)
     {
         var result = await _timeEntryService.DeleteAsync(id.Id);
 
@@ -66,7 +66,7 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Update([FromBody] UpdateTimeEntryRequest request)
+    public async Task<ActionResult> Update([FromBody] UpdateTimeEntryRequest request)
     {
         var result = await _timeEntryService.UpdateAsync(new UpdateTimeEntryCommand
         {

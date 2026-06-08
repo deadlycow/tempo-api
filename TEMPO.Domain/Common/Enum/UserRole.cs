@@ -4,5 +4,6 @@ public enum UserRole
 {
   admin,
   team_leader,
-  employee
+  employee,
+  project_manager
 }

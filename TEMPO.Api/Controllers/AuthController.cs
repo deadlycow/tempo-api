@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
 using TEMPO.Domain.Common.Enum;
@@ -15,7 +16,7 @@ namespace TEMPO.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody] LoginRequest request)
+        public async Task<ActionResult> Post([FromBody] LoginRequest request)
         {
             var result = await _authService.LoginAsync(request);
 
@@ -36,7 +37,7 @@ namespace TEMPO.Api.Controllers
         [HttpPost("register")]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody] CreateUserRequest request)
+        public async Task<ActionResult> Post([FromBody] CreateUserRequest request)
         {
             var result = await _authService.CreateAsync(new CreateUserCommand
             {
@@ -52,22 +53,23 @@ namespace TEMPO.Api.Controllers
             return Created();
         }
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public ActionResult Logout()
         {
-            return Ok("logout");
+            Response.Cookies.Delete("accessToken");
+            return Ok();
         }
         [HttpPost("refreshtoken")]
-        public IActionResult RefreshToken()
+        public ActionResult RefreshToken()
         {
             return Ok("new token");
         }
         [HttpPost("emailVerification")]
-        public IActionResult EmailVerification()
+        public ActionResult EmailVerification()
         {
             return Ok("Email verificaton");
         }
         [HttpPost("passwordreset")]
-        public IActionResult PasswordReset()
+        public ActionResult PasswordReset()
         {
             return Ok("password reset");
         }

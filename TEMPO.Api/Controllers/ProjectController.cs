@@ -14,7 +14,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get([FromQuery] GetProjectRequest request)
+    public async Task<ActionResult> Get([FromQuery] GetProjectRequest request)
     {
         var result = await _projectService.GetByIdAsync(request.Id, request.IncludeTimeEntries);
         if (!result.Success)
@@ -24,17 +24,17 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [HttpGet("all")]
     [ProducesResponseType(typeof(IEnumerable<ProjectResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<IEnumerable<ProjectResponse>>> GetAll()
     {
-        var projects = await _projectService.GetAllAsync();
-        if (projects == null || !projects.Success)
-            return NotFound(projects?.ErrorMessage ?? "No projects found.");
-        return Ok(projects);
+        var result = await _projectService.GetAllAsync();
+        if (result == null || !result.Success)
+            return NotFound(result?.ErrorMessage ?? "No projects found.");
+        return Ok(result.Data);
     }
     [HttpPost]
     [ProducesResponseType(typeof(CreateProjectRequest), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create(CreateProjectRequest request)
+    public async Task<ActionResult> Create(CreateProjectRequest request)
     {
         var result = await _projectService.CreateAsync(new CreateProjectCommand
         {
@@ -50,7 +50,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromQuery] DeleteProjectRequest request)
+    public async Task<ActionResult> Delete([FromQuery] DeleteProjectRequest request)
     {
         var result = await _projectService.DeleteAsync(request.Id);
 
@@ -62,7 +62,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Update(UpdateProjectRequest request)
+    public async Task<ActionResult> Update(UpdateProjectRequest request)
     {
         var result = await _projectService.UpdateAsync(new UpdateProjectCommand
         {
