@@ -39,9 +39,9 @@ public class UsersController(IUserService userService) : ControllerBase
         return Ok(user.Data);
     }
     [HttpGet("all")]
-    [ProducesResponseType(typeof(List<UserResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<UserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<UserResponse>>> GetAll()
+    public async Task<ActionResult<IEnumerable<UserResponse>>> GetAll()
     {
         var users = await _userService.GetAllAsync();
 
@@ -54,7 +54,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromQuery] DeleteUserRequest request)
+    public async Task<ActionResult> Delete([FromQuery] DeleteUserRequest request)
     {
         var result = await _userService.DeleteAsync(request.Id);
         if (!result.Succeeded)
@@ -65,7 +65,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update([FromQuery] UpdateUserRequest request)
+    public async Task<ActionResult> Update([FromQuery] UpdateUserRequest request)
     {
         var result = await _userService.UpdateAsync(new UpdateUserCommand
         {
