@@ -1,4 +1,5 @@
 namespace TEMPO.Data.Entities;
+
 public class Project
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -8,4 +9,7 @@ public class Project
     public DateTime? EndDate { get; set; }
     public ICollection<TimeEntry> TimeEntries { get; set; } = new List<TimeEntry>();
     public ICollection<AppUser> Employees { get; set; } = new List<AppUser>();
+
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
 }

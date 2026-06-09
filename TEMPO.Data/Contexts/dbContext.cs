@@ -13,20 +13,35 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
   {
     base.OnModelCreating(modelBuilder);
 
+    modelBuilder.Entity<WeeklyReport>()
+    .HasOne(wr => wr.Employee)
+    .WithMany(u => u.WeeklyReports)
+    .HasForeignKey(wr => wr.EmployeeId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<TimeEntry>()
+    .HasOne(te => te.WeeklyReport)
+    .WithMany(wr => wr.TimeEntry)
+    .HasForeignKey(te => te.WeeklyReportId)
+    .OnDelete(DeleteBehavior.NoAction);
+
     modelBuilder.Entity<TimeEntry>()
     .HasOne(te => te.Employee)
     .WithMany(u => u.TimeEntries)
     .HasForeignKey(te => te.EmployeeId)
-    .OnDelete(DeleteBehavior.Cascade);
+    .OnDelete(DeleteBehavior.Restrict);
 
     modelBuilder.Entity<TimeEntry>()
     .HasOne(te => te.Project)
     .WithMany(p => p.TimeEntries)
     .HasForeignKey(te => te.ProjectId)
-    .OnDelete(DeleteBehavior.Cascade);
+    .OnDelete(DeleteBehavior.Restrict);
 
     modelBuilder.Entity<TimeEntry>()
     .HasIndex(te => new { te.ProjectId, te.EmployeeId, te.Date })
     .IsUnique();
+
+    modelBuilder.Entity<Project>()
+    .HasQueryFilter(p => !p.IsDeleted);
   }
 }
