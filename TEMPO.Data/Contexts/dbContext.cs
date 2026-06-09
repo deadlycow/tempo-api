@@ -9,20 +9,21 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
   public DbSet<TimeEntry> TimeEntries { get; set; } = null!;
   public DbSet<Project> Projects { get; set; } = null!;
   public DbSet<AppUser> AppUsers { get; set; } = null!;
+  public DbSet<Report> Reports {get; set; } = null!;
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
 
-    modelBuilder.Entity<WeeklyReport>()
-    .HasOne(wr => wr.Employee)
-    .WithMany(u => u.WeeklyReports)
+    modelBuilder.Entity<Report>()
+    .HasOne(r => r.Employee)
+    .WithMany(u => u.Reports)
     .HasForeignKey(wr => wr.EmployeeId)
     .OnDelete(DeleteBehavior.Restrict);
 
     modelBuilder.Entity<TimeEntry>()
-    .HasOne(te => te.WeeklyReport)
-    .WithMany(wr => wr.TimeEntry)
-    .HasForeignKey(te => te.WeeklyReportId)
+    .HasOne(te => te.Report)
+    .WithMany(r => r.TimeEntry)
+    .HasForeignKey(te => te.ReportId)
     .OnDelete(DeleteBehavior.NoAction);
 
     modelBuilder.Entity<TimeEntry>()
