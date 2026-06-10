@@ -19,10 +19,10 @@ public static class TimeEntryFactory
     public static TimeEntry ToEntity(CreateTimeEntryCommand command) => new()
     {
         ProjectId = command.ProjectId,
-        EmployeeId = command.EmployeeId.ToString(),
+        EmployeeId = command.EmployeeId,
         HoursWorked = command.HoursWorked,
         Date = command.Date,
-        Description = command.Description
+        Description = command.Description,
     };
     public static IEnumerable<TimeEntry> ToEntityList(IEnumerable<CreateTimeEntryCommand> commands) => [.. commands.Select(ToEntity)];
     public static void UpdateEntity(TimeEntry entity, UpdateTimeEntryCommand command)

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Identity.Client;
 using TEMPO.Data.Interfaces;
 using TEMPO.Domain.Common;
 
@@ -7,9 +9,10 @@ public class ReportService(IReportRepository report)
 {
   private readonly IReportRepository _report = report;
 
-  public async Task<ServiceResult> CreateAsync(ReportCommand report)
+  public async Task<ServiceResult> CreateAsync()
   {
-
+    
+    return ServiceResult.SuccessResult();
   }
 }
 

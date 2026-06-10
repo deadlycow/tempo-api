@@ -4,12 +4,17 @@ using TEMPO.Service.Command;
 using TEMPO.Service.Interfaces;
 using TEMPO.Domain.Common;
 using TEMPO.Contracts.Dtos;
+using TEMPO.Data.Entities;
+using Azure.Core;
+using TEMPO.Domain.Common.Enum;
+using TEMPO.Domain.Helpers;
 
 namespace TEMPO.Service.Services;
 
-public class TimeEntryService(ITimeEntryRepository timeEntryRepository) : ITimeEntryService
+public class TimeEntryService(ITimeEntryRepository timeEntryRepository, IReportRepository report) : ITimeEntryService
 {
   private readonly ITimeEntryRepository _timeEntryRepository = timeEntryRepository;
+  private readonly IReportRepository _report = report;
 
   public async Task<ServiceResult<TimeEntryResponse>> GetByIdAsync(GetTimeEntryCommand command)
   {
@@ -29,8 +34,22 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository) : ITimeE
   }
   public async Task<ServiceResult<TimeEntryResponse>> CreateAsync(CreateTimeEntryCommand command)
   {
-    var entity = TimeEntryFactory.ToEntity(command);
+    var weekStart = WeekHelper.GetWeekStart(command.Date);
 
+    var report = await _report.GetByIdAndWeekAsync(command.EmployeeId, weekStart);
+
+    if (report == null)
+    {
+      report = new Report
+      {
+        EmployeeId = command.EmployeeId,
+        WeekStart = weekStart,
+        Status = ReportStatus.draft.ToString()
+      };
+      await _report.CreateAsync(report);
+    }
+    var entity = TimeEntryFactory.ToEntity(command);
+    entity.ReportId = report.Id;
     var created = await _timeEntryRepository.CreateAsync(entity);
 
     return ServiceResult<TimeEntryResponse>.SuccessResult(TimeEntryFactory.ToResponse(created));

@@ -9,7 +9,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
   public DbSet<TimeEntry> TimeEntries { get; set; } = null!;
   public DbSet<Project> Projects { get; set; } = null!;
   public DbSet<AppUser> AppUsers { get; set; } = null!;
-  public DbSet<Report> Reports {get; set; } = null!;
+  public DbSet<Report> Reports { get; set; } = null!;
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -44,5 +44,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     modelBuilder.Entity<Project>()
     .HasQueryFilter(p => !p.IsDeleted);
+
+    modelBuilder.Entity<Report>()
+    .HasIndex(r => new { r.EmployeeId, r.WeekStart })
+    .IsUnique();
   }
 }

@@ -10,23 +10,24 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
   private readonly ApplicationDbContext _context = context;
   private readonly DbSet<Report> _report = context.Set<Report>();
 
-  public async Task<Report> GetByIdAsync(Guid id)
+  public async Task<Report?> GetByIdAndWeekAsync(string Employeeid, DateOnly weekStart)
   {
-    var report = await _report
-    .FirstOrDefaultAsync(r => r.Id == id) ?? throw new InvalidOperationException("Report not found");
-    return report;
+    return await _report.FirstOrDefaultAsync(r =>
+    r.EmployeeId == Employeeid &&
+    r.WeekStart == weekStart);
   }
-  public async Task<ICollection<Report>> GetAllByUserIdAsync(Guid id)
+  public async Task<ICollection<Report>> GetAllByUserIdAsync(string EmployeeId)
   {
     var reports = await _report
-    .Where(r => r.EmployeeId == id.ToString()).ToListAsync();
+    .Where(r =>
+    r.EmployeeId == EmployeeId)
+    .ToListAsync();
     return reports;
   }
   public async Task<Report> CreateAsync(Report report)
   {
     await _report.AddAsync(report);
     await _context.SaveChangesAsync();
-
     return report;
   }
   public async Task DeleteAsync(Guid id)

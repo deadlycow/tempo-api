@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Service.Services;
 using TEMPO.Service.Command;
 using TEMPO.Contracts.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers;
-[Authorize]
+// [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TimeEntryController(TimeEntryService timeEntryService) : ControllerBase
+public class TimeEntryController(ITimeEntryService timeEntryService) : ControllerBase
 {
-    private readonly TimeEntryService _timeEntryService = timeEntryService;
+    private readonly ITimeEntryService _timeEntryService = timeEntryService;
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
