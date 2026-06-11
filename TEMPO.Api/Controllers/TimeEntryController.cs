@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using TEMPO.Service.Interfaces;
 
 namespace TEMPO.Api.Controllers;
-// [Authorize]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TimeEntryController(ITimeEntryService timeEntryService) : ControllerBase
