@@ -15,11 +15,10 @@ public class ReportController(ReportService report) : ControllerBase
 {
     private readonly ReportService _report = report;
 
-    [HttpGet]
+    [HttpPost]
     public async Task<ActionResult<ReportResponse>> Get([FromBody] ReportRequest request)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        // var userId = "330a3fcc-cefa-4634-a314-05d1bae1fbec";
         if (string.IsNullOrWhiteSpace(userId))
             return Unauthorized();
 
