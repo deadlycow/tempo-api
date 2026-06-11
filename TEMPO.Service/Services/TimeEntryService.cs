@@ -36,7 +36,7 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, IReportR
   {
     var weekStart = WeekHelper.GetWeekStart(command.Date);
 
-    var report = await _report.GetByIdAndWeekAsync(command.EmployeeId, weekStart);
+    var report = await _report.GetByEmployeeAndWeek(command.EmployeeId, weekStart);
 
     if (report == null)
     {

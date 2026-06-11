@@ -3,8 +3,10 @@ using TEMPO.Service.Command;
 using TEMPO.Contracts.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using TEMPO.Service.Interfaces;
+using System.Security.Claims;
 
 namespace TEMPO.Api.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -38,10 +40,14 @@ public class TimeEntryController(ITimeEntryService timeEntryService) : Controlle
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Post(CreateTimeEntryRequest request)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
         var result = await _timeEntryService.CreateAsync(new CreateTimeEntryCommand
         {
             ProjectId = request.ProjectId,
-            EmployeeId = request.EmployeeId,
+            EmployeeId = userId,
             HoursWorked = request.HoursWorked,
             Date = request.Date,
             Description = request.Description

@@ -4,7 +4,7 @@ namespace TEMPO.Data.Interfaces;
 
 public interface IReportRepository
 {
-  Task<Report?> GetByIdAndWeekAsync(string EmployeeId, DateOnly weekStart);
+  Task<Report?> GetByEmployeeAndWeek(string EmployeeId, DateOnly weekStart);
   Task<ICollection<Report>> GetAllByUserIdAsync(string EmployeeId);
   Task<Report> CreateAsync(Report report);
   Task DeleteAsync(Guid id);

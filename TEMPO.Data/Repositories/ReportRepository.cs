@@ -10,11 +10,13 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
   private readonly ApplicationDbContext _context = context;
   private readonly DbSet<Report> _report = context.Set<Report>();
 
-  public async Task<Report?> GetByIdAndWeekAsync(string Employeeid, DateOnly weekStart)
+  public async Task<Report?> GetByEmployeeAndWeek(string EmployeeId, DateOnly date)
   {
-    return await _report.FirstOrDefaultAsync(r =>
-    r.EmployeeId == Employeeid &&
-    r.WeekStart == weekStart);
+    return await _report
+    .Include(t => t.TimeEntry)
+    .FirstOrDefaultAsync(r =>
+    r.EmployeeId == EmployeeId &&
+    r.WeekStart == date);
   }
   public async Task<ICollection<Report>> GetAllByUserIdAsync(string EmployeeId)
   {
