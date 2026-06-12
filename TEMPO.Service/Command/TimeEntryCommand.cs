@@ -10,6 +10,7 @@ public record CreateTimeEntryCommand : TimeEntryCommand
     public required Guid ProjectId { get; init; }
     public required DateOnly Date { get; init; }
     public required double HoursWorked { get; init; }
+    public string? ReportId { get; init; }
 }
 public record UpdateTimeEntryCommand : TimeEntryCommand
 {

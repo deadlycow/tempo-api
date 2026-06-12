@@ -38,24 +38,26 @@ public class TimeEntryController(ITimeEntryService timeEntryService) : Controlle
     [HttpPost]
     [ProducesResponseType(typeof(CreateTimeEntryRequest), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> Post(CreateTimeEntryRequest request)
+    public async Task<ActionResult> Post([FromBody] CreateTimeEntryRequest[] request)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrWhiteSpace(userId))
             return Unauthorized();
 
-        var result = await _timeEntryService.CreateAsync(new CreateTimeEntryCommand
+        var result = await _timeEntryService.CreateAsync([.. request.Select(item => new CreateTimeEntryCommand
         {
-            ProjectId = request.ProjectId,
+            ProjectId = item.ProjectId,
             EmployeeId = userId,
-            HoursWorked = request.HoursWorked,
-            Date = request.Date,
-            Description = request.Description
-        });
+            HoursWorked = item.HoursWorked,
+            Date = item.Date,
+            Description = item.Description,
+            ReportId = item.ReportId
+        })]);
+
         if (!result.Success)
             return BadRequest(result.ErrorMessage);
 
-        return CreatedAtAction(nameof(Get), new { id = result.Data?.Id }, result.Data);
+        return CreatedAtAction(nameof(Get), new { id = result.Data?.FirstOrDefault()?.Id }, result.Data);
     }
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

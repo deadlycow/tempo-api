@@ -32,27 +32,27 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, IReportR
 
     return ServiceResult<IEnumerable<TimeEntryResponse>>.SuccessResult(TimeEntryFactory.ToResponseList(timeEntries));
   }
-  public async Task<ServiceResult<TimeEntryResponse>> CreateAsync(CreateTimeEntryCommand command)
+  public async Task<ServiceResult<IEnumerable<TimeEntryResponse>>> CreateAsync(CreateTimeEntryCommand[] command)
   {
-    var weekStart = WeekHelper.GetWeekStart(command.Date);
+    var weekStart = WeekHelper.GetWeekStart(command[0].Date);
 
-    var report = await _report.GetByEmployeeAndWeek(command.EmployeeId, weekStart);
+    var report = await _report.GetByEmployeeAndWeek(command[0].EmployeeId, weekStart);
 
     if (report == null)
     {
       report = new Report
       {
-        EmployeeId = command.EmployeeId,
+        EmployeeId = command[0].EmployeeId,
         WeekStart = weekStart,
         Status = ReportStatus.draft.ToString()
       };
       await _report.CreateAsync(report);
     }
-    var entity = TimeEntryFactory.ToEntity(command);
-    entity.ReportId = report.Id;
+    var entity = TimeEntryFactory.ToEntityList(command);
+    // entity.ReportId = report.Id;
     var created = await _timeEntryRepository.CreateAsync(entity);
 
-    return ServiceResult<TimeEntryResponse>.SuccessResult(TimeEntryFactory.ToResponse(created));
+    return ServiceResult<IEnumerable<TimeEntryResponse>>.SuccessResult(TimeEntryFactory.ToResponseList(created));
   }
   public async Task<ServiceResult> DeleteAsync(Guid id)
   {

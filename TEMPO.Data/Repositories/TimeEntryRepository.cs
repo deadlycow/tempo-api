@@ -21,9 +21,9 @@ public class TimeEntryRepository(ApplicationDbContext context) : ITimeEntryRepos
       .Where(te => te.EmployeeId == id.ToString())
       .ToListAsync();
   }
-  public async Task<TimeEntry> CreateAsync(TimeEntry timeEntry)
+  public async Task<IEnumerable<TimeEntry>> CreateAsync(IEnumerable<TimeEntry> timeEntry)
   {
-    await _timeEntries.AddAsync(timeEntry);
+    await _timeEntries.AddRangeAsync(timeEntry);
     await _context.SaveChangesAsync();
 
     return timeEntry;
