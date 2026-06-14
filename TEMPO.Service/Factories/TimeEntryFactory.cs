@@ -18,6 +18,7 @@ public static class TimeEntryFactory
     public static IEnumerable<TimeEntryResponse> ToResponseList(IEnumerable<TimeEntry> timeEntries) => [.. timeEntries.Select(ToResponse)];
     public static TimeEntry ToEntity(CreateTimeEntryCommand command) => new()
     {
+        Id = command.Id ?? new Guid(),
         ProjectId = command.ProjectId,
         EmployeeId = command.EmployeeId,
         HoursWorked = command.HoursWorked,

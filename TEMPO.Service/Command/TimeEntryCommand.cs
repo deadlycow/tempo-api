@@ -6,6 +6,7 @@ public record TimeEntryCommand
 }
 public record CreateTimeEntryCommand : TimeEntryCommand
 {
+    public Guid? Id { get; init; }
     public required string EmployeeId { get; init; }
     public required Guid ProjectId { get; init; }
     public required DateOnly Date { get; init; }
