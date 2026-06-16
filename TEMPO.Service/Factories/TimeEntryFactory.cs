@@ -25,7 +25,7 @@ public static class TimeEntryFactory
         Date = command.Date,
         Description = command.Description,
     };
-    public static IEnumerable<TimeEntry> ToEntityList(IEnumerable<CreateTimeEntryCommand> commands) => [.. commands.Select(ToEntity)];
+    public static IList<TimeEntry> ToEntityList(IEnumerable<CreateTimeEntryCommand> commands) => [.. commands.Select(ToEntity)];
     public static void UpdateEntity(TimeEntry entity, UpdateTimeEntryCommand command)
     {
         if (command.ProjectId.HasValue)
