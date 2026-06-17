@@ -8,7 +8,7 @@ public record TimeEntryRequest
 };
 public record CreateTimeEntryRequest : TimeEntryRequest
 {
-  public required string Id { get; init; }
+  public string? Id { get; init; }
   public required Guid ProjectId { get; init; }
   public required double HoursWorked { get; init; }
   public required DateOnly Date { get; init; }

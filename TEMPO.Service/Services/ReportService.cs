@@ -55,21 +55,9 @@ public class ReportService(IReportRepository report)
     if (report is null)
     {
       var data = await _report.CreateAsync(ReportFactory.ToEntity(command));
-      // var data = _report.CreateAsync(new Report
-      // {
-      //   Id = Guid.TryParse(command.Id, out Guid guid) ? guid : Guid.NewGuid(),
-      //   EmployeeId = command.UserId,
-      //   WeekStart = command.WeekStart,
-      //   TimeEntry = TimeEntryFactory.ToEntityList(command.TimeEntries),
-      //   Status = command.Status ?? "draft",
-      //   VerifiedAt = command.VerifiedAt,
-      //   RejectedAt = command.RejectedAt,
-      //   SentAt = command.SentAt,
-      //   FeedBack = command.SentAt,
-      //   ReviewedBy = command.ReviewedBy
-      // });
       return ServiceResult.SuccessResult();
     }
+
     report.Status = command.Status ?? report.Status;
     report.SubmittedAt = command.SubmittedAt;
     report.VerifiedAt = command.VerifiedAt;
@@ -81,34 +69,24 @@ public class ReportService(IReportRepository report)
     {
       var existingEntry = report.TimeEntry.FirstOrDefault(x => x.Id == entry.Id);
       if (existingEntry is null)
-        report.TimeEntry.Add(TimeEntryFactory.ToEntity(entry));
+      {
+        var newEntry = TimeEntryFactory.ToEntity(entry);
+        report.TimeEntry.Add(newEntry);
+      }
       else
       {
         existingEntry.Date = entry.Date;
         existingEntry.HoursWorked = entry.HoursWorked;
         existingEntry.ProjectId = entry.ProjectId;
         existingEntry.Description = entry.Description;
+        existingEntry.ReportId = report.Id;
       }
     }
 
-    await _report.UpdateAsync(report);
-
-
+    var result = await _report.UpdateAsync(report);
+    if (result)
+      return ServiceResult.SuccessResult();
 
     return ServiceResult.Failure("Failed");
-
   }
 }
-
-
-
-
-
-// public interface IReportRepository
-// {
-//   Task<Report> CreateAsync(Report report);
-//   Task DeleteAsync(Guid id);
-//   Task<ICollection<Report>> GetAllByUserIdAsync(Guid id);
-//   Task<Report> GetByIdAsync(Guid id);
-//   Task<bool> UpdateAsync(Report report);
-// }

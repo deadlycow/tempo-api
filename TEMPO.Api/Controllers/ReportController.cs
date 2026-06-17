@@ -1,9 +1,7 @@
-using System.IO.Compression;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TEMPO.Contracts.Dtos;
-using TEMPO.Data.Entities;
 using TEMPO.Service.Command;
 using TEMPO.Service.Services;
 
@@ -58,7 +56,7 @@ public class ReportController(ReportService report) : ControllerBase
                     ProjectId = x.ProjectId,
                     Date = x.Date,
                     HoursWorked = x.HoursWorked,
-                    ReportId = x.ReportId,
+                    ReportId = x.ReportId ?? request.Id,
                     Description = x.Description
                 }),
                 Status = request.Status,

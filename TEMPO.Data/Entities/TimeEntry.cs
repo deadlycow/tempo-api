@@ -2,7 +2,7 @@ namespace TEMPO.Data.Entities;
 
 public class TimeEntry
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public required string EmployeeId { get; set; }
     public AppUser Employee { get; set; } = null!;
     public DateOnly Date { get; set; }
