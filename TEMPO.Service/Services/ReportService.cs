@@ -8,9 +8,10 @@ using TEMPO.Service.Factories;
 
 namespace TEMPO.Service.Services;
 
-public class ReportService(IReportRepository report)
+public class ReportService(IReportRepository report, ITimeEntryRepository timeEntry)
 {
   private readonly IReportRepository _report = report;
+  private readonly ITimeEntryRepository _timeEntry = timeEntry;
 
   public async Task<ServiceResult<ReportResponse>> GetReportByIdAndDate(GetReportCommand command)
   {
@@ -58,6 +59,13 @@ public class ReportService(IReportRepository report)
       return ServiceResult.SuccessResult();
     }
 
+    var incomingIds = command.TimeEntries.Where(x => x.Id.HasValue).Select(x => x.Id!.Value).ToHashSet();
+    var toRemove = report.TimeEntry.Where(x => !incomingIds.Contains(x.Id)).ToList();
+    foreach (var entry in toRemove)
+    {
+      await _timeEntry.DeleteAsync(entry.Id);
+    }
+
     report.Status = command.Status ?? report.Status;
     report.SubmittedAt = command.SubmittedAt;
     report.VerifiedAt = command.VerifiedAt;
@@ -65,6 +73,7 @@ public class ReportService(IReportRepository report)
     report.SentAt = command.SentAt;
     report.FeedBack = command.Feedback;
     report.ReviewedBy = command.ReviewedBy;
+
     foreach (var entry in command.TimeEntries)
     {
       var existingEntry = report.TimeEntry.FirstOrDefault(x => x.Id == entry.Id);
@@ -83,10 +92,14 @@ public class ReportService(IReportRepository report)
       }
     }
 
-    var result = await _report.UpdateAsync(report);
-    if (result)
-      return ServiceResult.SuccessResult();
+    return await _report.UpdateAsync(report) ? ServiceResult.SuccessResult() : ServiceResult.Failure("Failed");
+  }
+  public async Task<ServiceResult<IEnumerable<ReportResponse>>> GetAllByUserId(string id)
+  {
+    var reports = await _report.GetAllByUserIdAsync(id);
 
-    return ServiceResult.Failure("Failed");
+      var data = ReportFactory.ToReportResponseList(reports);
+       
+    return ServiceResult<IEnumerable<ReportResponse>>.SuccessResult(data);
   }
 }

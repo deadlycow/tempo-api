@@ -1,3 +1,4 @@
+using TEMPO.Contracts.Dtos;
 using TEMPO.Data.Entities;
 using TEMPO.Service.Command;
 
@@ -34,4 +35,20 @@ public static class ReportFactory
         };
     }
     // public static IEnumerable<Report> ToReportList(IEnumerable<ReportRequestCommand> report) => [.. report.Select(ToEntity)];
+
+    public static ReportResponse ToReportResponse(Report entity)
+    {
+        return new ReportResponse
+        {
+            Id = entity.Id,
+            Status = entity.Status,
+            SubmittedAt = entity.SubmittedAt,
+            VerifiedAt = entity.VerifiedAt,
+            RejectedAt = entity.RejectedAt,
+            SentAt = entity.SentAt,
+            FeedBack = entity.FeedBack,
+            ReviewedBy = entity.ReviewedBy
+        };
+    }
+    public static IEnumerable<ReportResponse> ToReportResponseList(IEnumerable<Report> report) => [.. report.Select(ToReportResponse)];
 }

@@ -72,4 +72,16 @@ public class ReportController(ReportService report) : ControllerBase
 
         return Created();
     }
+    [HttpGet("all")]
+    public async Task<ActionResult> All()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var result = await _report.GetAllByUserId(userId);
+        if (!result.Success)
+            return NotFound(result?.ErrorMessage ?? "No reports found");
+        return Ok(result.Data);
+    }
 }
