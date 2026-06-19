@@ -21,6 +21,7 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
   public async Task<ICollection<Report>> GetAllByUserIdAsync(string EmployeeId)
   {
     var reports = await _report
+    .Include(t => t.TimeEntry)
     .Where(r =>
     r.EmployeeId == EmployeeId)
     .ToListAsync();

@@ -15,15 +15,15 @@ public static class ReportFactory
             Id = reportId,
             EmployeeId = command.UserId!,
             WeekStart = command.WeekStart,
-            TimeEntry = [.. command.TimeEntries.Select(x => new TimeEntry
+            TimeEntry = [.. command.TimeEntries.Select(te => new TimeEntry
             {
-                Id = x.Id ?? Guid.NewGuid(),
-                EmployeeId = x.EmployeeId,
-                Date = x.Date,
-                HoursWorked = x.HoursWorked,
-                Description = x.Description,
-                ProjectId = x.ProjectId,
-                ReportId = Guid.TryParse(x.ReportId, out Guid reportGuid) ? reportGuid : reportId
+                Id = te.Id ?? Guid.NewGuid(),
+                EmployeeId = te.EmployeeId,
+                Date = te.Date,
+                HoursWorked = te.HoursWorked,
+                Description = te.Description,
+                ProjectId = te.ProjectId,
+                ReportId = Guid.TryParse(te.ReportId, out Guid reportGuid) ? reportGuid : reportId
             })],
             Status = command.Status ?? "draft",
             SubmittedAt = command.SubmittedAt,
@@ -36,19 +36,27 @@ public static class ReportFactory
     }
     // public static IEnumerable<Report> ToReportList(IEnumerable<ReportRequestCommand> report) => [.. report.Select(ToEntity)];
 
-    public static ReportResponse ToReportResponse(Report entity)
+    public static ReportResponse ToReportResponse(Report entity) => new()
     {
-        return new ReportResponse
+        Id = entity.Id,
+        WeekStart = entity.WeekStart,
+        Status = entity.Status,
+        SubmittedAt = entity.SubmittedAt,
+        VerifiedAt = entity.VerifiedAt,
+        RejectedAt = entity.RejectedAt,
+        SentAt = entity.SentAt,
+        FeedBack = entity.FeedBack,
+        ReviewedBy = entity.ReviewedBy,
+
+        TimeEntries = entity.TimeEntry.Select(te => new TimeEntryResponse
         {
-            Id = entity.Id,
-            Status = entity.Status,
-            SubmittedAt = entity.SubmittedAt,
-            VerifiedAt = entity.VerifiedAt,
-            RejectedAt = entity.RejectedAt,
-            SentAt = entity.SentAt,
-            FeedBack = entity.FeedBack,
-            ReviewedBy = entity.ReviewedBy
-        };
-    }
+            Id = te.Id,
+            ProjectId = te.ProjectId,
+            EmployeeId = te.EmployeeId,
+            HoursWorked = te.HoursWorked,
+            Date = te.Date,
+            Description = te.Description
+        })
+    };
     public static IEnumerable<ReportResponse> ToReportResponseList(IEnumerable<Report> report) => [.. report.Select(ToReportResponse)];
 }

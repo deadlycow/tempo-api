@@ -3,6 +3,8 @@ namespace TEMPO.Contracts.Dtos;
 public record ReportResponse
 {
     public Guid Id { get; init; }
+    public string? UserId { get; init; }
+    public DateOnly WeekStart { get; init; }
     public IEnumerable<TimeEntryResponse> TimeEntries { get; init; } = [];
     public required string Status { get; init; }
     public string? SubmittedAt { get; init; }
