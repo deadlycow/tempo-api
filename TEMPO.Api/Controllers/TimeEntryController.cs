@@ -26,12 +26,18 @@ public class TimeEntryController(ITimeEntryService timeEntryService) : Controlle
     }
     [HttpGet("allByUserId")]
     [ProducesResponseType(typeof(IEnumerable<TimeEntryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetAll([FromQuery] GetAllTimeEntryByUserIdRequest request)
+    public async Task<ActionResult> GetAll()
     {
-        var timeEntries = await _timeEntryService.GetAllByUserIdAsync(new GetTimeEntryCommand { Id = request.Id });
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        _ = Guid.TryParse(userId, out Guid result);
+        var timeEntries = await _timeEntryService.GetAllByUserIdAsync(new GetTimeEntryCommand { Id = result });
         if (timeEntries == null || !timeEntries.Success)
-            return NotFound(timeEntries?.ErrorMessage ?? "No time entries found for the user.");
+            return NotFound(timeEntries?.ErrorMessage ?? "No time entries found.");
         return Ok(timeEntries);
     }
 
