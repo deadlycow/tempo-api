@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
-using TEMPO.Service.Services;
 using TEMPO.Service.Command;
 using TEMPO.Contracts.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using TEMPO.Service.Interfaces;
+using System.Security.Claims;
 
 namespace TEMPO.Api.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TimeEntryController(TimeEntryService timeEntryService) : ControllerBase
+public class TimeEntryController(ITimeEntryService timeEntryService) : ControllerBase
 {
-    private readonly TimeEntryService _timeEntryService = timeEntryService;
+    private readonly ITimeEntryService _timeEntryService = timeEntryService;
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,32 +26,44 @@ public class TimeEntryController(TimeEntryService timeEntryService) : Controller
     }
     [HttpGet("allByUserId")]
     [ProducesResponseType(typeof(IEnumerable<TimeEntryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetAll([FromQuery] GetAllTimeEntryByUserIdRequest request)
+    public async Task<ActionResult> GetAll()
     {
-        var timeEntries = await _timeEntryService.GetAllByUserIdAsync(new GetTimeEntryCommand { Id = request.Id });
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        _ = Guid.TryParse(userId, out Guid result);
+        var timeEntries = await _timeEntryService.GetAllByUserIdAsync(new GetTimeEntryCommand { Id = result });
         if (timeEntries == null || !timeEntries.Success)
-            return NotFound(timeEntries?.ErrorMessage ?? "No time entries found for the user.");
+            return NotFound(timeEntries?.ErrorMessage ?? "No time entries found.");
         return Ok(timeEntries);
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(CreateTimeEntryRequest), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> Post(CreateTimeEntryRequest request)
+    public async Task<ActionResult> Post([FromBody] CreateTimeEntryRequest[] request)
     {
-        var result = await _timeEntryService.CreateAsync(new CreateTimeEntryCommand
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var result = await _timeEntryService.CreateAsync([.. request.Select(item => new CreateTimeEntryCommand
         {
-            ProjectId = request.ProjectId,
-            EmployeeId = request.EmployeeId,
-            HoursWorked = request.HoursWorked,
-            Date = request.Date,
-            Description = request.Description
-        });
+            ProjectId = item.ProjectId,
+            EmployeeId = userId,
+            HoursWorked = item.HoursWorked,
+            Date = item.Date,
+            Description = item.Description,
+            ReportId = item.ReportId
+        })]);
+
         if (!result.Success)
             return BadRequest(result.ErrorMessage);
 
-        return CreatedAtAction(nameof(Get), new { id = result.Data?.Id }, result.Data);
+        return CreatedAtAction(nameof(Get), new { id = result.Data?.FirstOrDefault()?.Id }, result.Data);
     }
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

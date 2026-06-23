@@ -231,11 +231,17 @@ namespace TEMPO.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -249,14 +255,57 @@ namespace TEMPO.Data.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("TEMPO.Data.Entities.Report", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FeedBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RejectedAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReviewedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SentAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubmittedAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VerifiedAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("WeekStart")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId", "WeekStart")
+                        .IsUnique();
+
+                    b.ToTable("Reports");
+                });
+
             modelBuilder.Entity("TEMPO.Data.Entities.TimeEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -271,9 +320,14 @@ namespace TEMPO.Data.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ReportId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("ReportId");
 
                     b.HasIndex("ProjectId", "EmployeeId", "Date")
                         .IsUnique();
@@ -339,27 +393,48 @@ namespace TEMPO.Data.Migrations
                         .HasForeignKey("ProjectId");
                 });
 
+            modelBuilder.Entity("TEMPO.Data.Entities.Report", b =>
+                {
+                    b.HasOne("TEMPO.Data.Entities.AppUser", "Employee")
+                        .WithMany("Reports")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("TEMPO.Data.Entities.TimeEntry", b =>
                 {
                     b.HasOne("TEMPO.Data.Entities.AppUser", "Employee")
                         .WithMany("TimeEntries")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TEMPO.Data.Entities.Project", "Project")
                         .WithMany("TimeEntries")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TEMPO.Data.Entities.Report", "Report")
+                        .WithMany("TimeEntry")
+                        .HasForeignKey("ReportId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Employee");
 
                     b.Navigation("Project");
+
+                    b.Navigation("Report");
                 });
 
             modelBuilder.Entity("TEMPO.Data.Entities.AppUser", b =>
                 {
+                    b.Navigation("Reports");
+
                     b.Navigation("TimeEntries");
                 });
 
@@ -368,6 +443,11 @@ namespace TEMPO.Data.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("TimeEntries");
+                });
+
+            modelBuilder.Entity("TEMPO.Data.Entities.Report", b =>
+                {
+                    b.Navigation("TimeEntry");
                 });
 #pragma warning restore 612, 618
         }

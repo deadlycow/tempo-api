@@ -18,13 +18,15 @@ public static class TimeEntryFactory
     public static IEnumerable<TimeEntryResponse> ToResponseList(IEnumerable<TimeEntry> timeEntries) => [.. timeEntries.Select(ToResponse)];
     public static TimeEntry ToEntity(CreateTimeEntryCommand command) => new()
     {
+        Id = command.Id ?? Guid.Empty,
         ProjectId = command.ProjectId,
-        EmployeeId = command.EmployeeId.ToString(),
+        EmployeeId = command.EmployeeId,
         HoursWorked = command.HoursWorked,
         Date = command.Date,
-        Description = command.Description
+        Description = command.Description,
+        ReportId = Guid.TryParse(command.ReportId, out Guid guid) ? guid : Guid.NewGuid()
     };
-    public static IEnumerable<TimeEntry> ToEntityList(IEnumerable<CreateTimeEntryCommand> commands) => [.. commands.Select(ToEntity)];
+    public static IList<TimeEntry> ToEntityList(IEnumerable<CreateTimeEntryCommand> commands) => [.. commands.Select(ToEntity)];
     public static void UpdateEntity(TimeEntry entity, UpdateTimeEntryCommand command)
     {
         if (command.ProjectId.HasValue)

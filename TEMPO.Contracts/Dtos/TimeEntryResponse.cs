@@ -3,8 +3,8 @@ public record TimeEntryResponse
 {
     public Guid Id { get; set; }
     public Guid ProjectId { get; set; }
-    public string EmployeeId { get; set; } = null!;
+    public required string EmployeeId { get; set; }
     public double? HoursWorked { get; set; }
-    public DateTime? Date { get; set; }
+    public DateOnly? Date { get; set; }
     public string? Description { get; set; }
 }

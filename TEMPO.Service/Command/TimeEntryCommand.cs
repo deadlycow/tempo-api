@@ -6,17 +6,19 @@ public record TimeEntryCommand
 }
 public record CreateTimeEntryCommand : TimeEntryCommand
 {
-    public required Guid EmployeeId { get; init; }
+    public Guid? Id { get; init; }
+    public required string EmployeeId { get; init; }
     public required Guid ProjectId { get; init; }
-    public required DateTime Date { get; init; }
+    public required DateOnly Date { get; init; }
     public required double HoursWorked { get; init; }
+    public string? ReportId { get; init; }
 }
 public record UpdateTimeEntryCommand : TimeEntryCommand
 {
     public required Guid Id { get; init; }
-    public Guid? EmployeeId { get; init; }
+    public required string EmployeeId { get; init; }
     public Guid? ProjectId { get; init; }
-    public DateTime? Date { get; init; }
+    public DateOnly? Date { get; init; }
     public double? HoursWorked { get; init; }
 }
 public record GetTimeEntryCommand
